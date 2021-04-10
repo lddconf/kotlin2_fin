@@ -15,47 +15,45 @@ data class CocktailDetails(
     val strAlcoholic: String,
     val strGlass: String,
     val strInstructions: String?,
-    val ingredients: List<Ingredient>,
-    val strImageSource: String,
+    val strDrinkThumb: String?,
+    val ingredients: List<IngredientAmount>,
     val strImageAttribution: String,
     val strCreativeCommonsConfirmed: Boolean,
     val dateModified: String
 ) : Parcelable
 
 
-fun CocktailDetailsJSON.toCocktailDetails(): CocktailDetails {
-    return CocktailDetails(
-        id = id,
-        strDrink = strDrink,
-        strDrinkAlternative = strDrinkAlternative,
-        strTags = strTags,
-        strVideo = strVideo,
-        strCategory = strCategory,
-        strAlcoholic = strAlcoholic,
-        strGlass = strGlass,
-        strInstructions = strInstructions,
-        ingredients = listOf(
-            Ingredient(strIngredient1 ?: "", strMeasure1 ?: ""),
-            Ingredient(strIngredient2 ?: "", strMeasure2 ?: ""),
-            Ingredient(strIngredient3 ?: "", strMeasure3 ?: ""),
-            Ingredient(strIngredient4 ?: "", strMeasure4 ?: ""),
-            Ingredient(strIngredient5 ?: "", strMeasure5 ?: ""),
-            Ingredient(strIngredient6 ?: "", strMeasure6 ?: ""),
-            Ingredient(strIngredient7 ?: "", strMeasure7 ?: ""),
-            Ingredient(strIngredient8 ?: "", strMeasure8 ?: ""),
-            Ingredient(strIngredient9 ?: "", strMeasure9 ?: ""),
-            Ingredient(strIngredient10 ?: "", strMeasure10 ?: ""),
-            Ingredient(strIngredient11 ?: "", strMeasure11 ?: ""),
-            Ingredient(strIngredient12 ?: "", strMeasure12 ?: ""),
-            Ingredient(strIngredient13 ?: "", strMeasure13 ?: ""),
-            Ingredient(strIngredient14 ?: "", strMeasure14 ?: ""),
-            Ingredient(strIngredient15 ?: "", strMeasure15 ?: "")
-        ).filter{
-            it.name.isNotEmpty()
-        },
-        strImageSource = strImageSource,
-        strImageAttribution = strImageAttribution,
-        strCreativeCommonsConfirmed = strCreativeCommonsConfirmed,
-        dateModified = dateModified
-    )
-}
+fun CocktailDetailsJSON.toCocktailDetails() = CocktailDetails(
+    id = id,
+    strDrink = strDrink,
+    strDrinkAlternative = strDrinkAlternative,
+    strTags = strTags,
+    strVideo = strVideo,
+    strCategory = strCategory,
+    strAlcoholic = strAlcoholic,
+    strGlass = strGlass,
+    strInstructions = strInstructions,
+    ingredients = listOf(
+        IngredientAmount(strIngredient1 ?: "", strMeasure1 ?: ""),
+        IngredientAmount(strIngredient2 ?: "", strMeasure2 ?: ""),
+        IngredientAmount(strIngredient3 ?: "", strMeasure3 ?: ""),
+        IngredientAmount(strIngredient4 ?: "", strMeasure4 ?: ""),
+        IngredientAmount(strIngredient5 ?: "", strMeasure5 ?: ""),
+        IngredientAmount(strIngredient6 ?: "", strMeasure6 ?: ""),
+        IngredientAmount(strIngredient7 ?: "", strMeasure7 ?: ""),
+        IngredientAmount(strIngredient8 ?: "", strMeasure8 ?: ""),
+        IngredientAmount(strIngredient9 ?: "", strMeasure9 ?: ""),
+        IngredientAmount(strIngredient10 ?: "", strMeasure10 ?: ""),
+        IngredientAmount(strIngredient11 ?: "", strMeasure11 ?: ""),
+        IngredientAmount(strIngredient12 ?: "", strMeasure12 ?: ""),
+        IngredientAmount(strIngredient13 ?: "", strMeasure13 ?: ""),
+        IngredientAmount(strIngredient14 ?: "", strMeasure14 ?: ""),
+        IngredientAmount(strIngredient15 ?: "", strMeasure15 ?: "")
+    ).filter {
+        it.name.isNotEmpty()
+    },
+    strDrinkThumb = strDrinkThumb,
+    strImageAttribution = strImageAttribution,
+    strCreativeCommonsConfirmed = strCreativeCommonsConfirmed,
+    dateModified = dateModified
+)

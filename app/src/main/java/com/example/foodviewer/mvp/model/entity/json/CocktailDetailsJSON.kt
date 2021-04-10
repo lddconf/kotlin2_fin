@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class CocktailDetailsJSON(
+data class CocktailDetailsJSON(
     val id : String,
     val strDrink : String,
     val strDrinkAlternative : String?,
