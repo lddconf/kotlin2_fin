@@ -1,9 +1,12 @@
 package com.example.foodviewer.ui.fragment
 
+import android.animation.LayoutTransition
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ToggleButton
+import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
 import com.example.foodviewer.mvp.presenters.CocktailDetailsPresenter
@@ -26,7 +29,6 @@ class CocktailDetailsFragment : MvpAppCompatFragment(), ICocktailDetailsView, On
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -36,6 +38,18 @@ class CocktailDetailsFragment : MvpAppCompatFragment(), ICocktailDetailsView, On
         cocktailDetailsBinding = it
     }.root
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        cocktailDetailsBinding?.cocktailRecipe?.setOnClickListener {
+            presenter.recipeViewClicked()
+        }
+
+        cocktailDetailsBinding?.cocktailFavorite?.setOnClickListener {
+            it as ToggleButton
+            presenter.favoriteChanged(it.isChecked)
+        }
+
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -55,4 +69,15 @@ class CocktailDetailsFragment : MvpAppCompatFragment(), ICocktailDetailsView, On
     }
 
     override fun onBackClicked(): Boolean = presenter.backClick()
+
+    override fun collapseRecipeText(collapse: Boolean) {
+        if (collapse) {
+            cocktailDetailsBinding?.cocktailRecipe?.maxLines =
+                requireContext().resources.getInteger(R.integer.recipeCollapsedMaxLines)
+            return
+        }
+        cocktailDetailsBinding?.cocktailRecipe?.maxLines = Int.MAX_VALUE
+    }
+
+
 }

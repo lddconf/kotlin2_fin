@@ -12,6 +12,8 @@ class MainPresenter(
 ) : MvpPresenter<IMainActivityView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        router.navigateTo(screens.cocktailDetails(null))
+
     }
 
     fun backClicked() {

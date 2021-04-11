@@ -9,12 +9,22 @@ class CocktailDetailsPresenter(
     val cocktailDetails: CocktailDetails?,
     val router: Router
 ) : MvpPresenter<ICocktailDetailsView>() {
+    private var recipeCollapsed = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         cocktailDetails?.let {
             //TODO some settings
         }
+    }
+
+    fun recipeViewClicked() {
+        recipeCollapsed = recipeCollapsed.not()
+        viewState.collapseRecipeText(recipeCollapsed)
+    }
+
+    fun favoriteChanged(state: Boolean) {
+
     }
 
     fun backClick(): Boolean {
