@@ -41,8 +41,8 @@ class CocktailDetailsPresenter(
         override fun bindView(view: IngredientsAmountRVAdapter.ViewHolder) = with(view) {
             val ingredient = ingredients[view.pos]
             ingredientName(ingredient.name)
-            ingredientAlternatives("")
-            ingredientExists(true)
+            ingredientAlternatives( "")
+            ingredientExists(false)
             ingredientAmount(ingredient.amount)
             loadIngredientView(ingredientsApi.ingredientSmallImageURLByName(ingredient.name))
         }

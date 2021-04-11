@@ -33,6 +33,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:textColor="@color/favorite_not_selected"
                     android:gravity="center_vertical"
                     android:text="@string/cocktail_name_default"
                     android:textSize="25sp" />
