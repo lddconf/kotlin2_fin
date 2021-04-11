@@ -8,6 +8,7 @@
     android:paddingBottom="2dp"
     android:paddingStart="@dimen/cocktail_details_margin_start"
     android:paddingEnd="@dimen/cocktail_details_margin_end"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <ImageView
@@ -31,6 +32,7 @@
             android:textColor="@color/favorite_not_selected"
             android:text="@string/ingredients_name"
             android:textSize="15sp"
+            android:ellipsize="end"
             tools:ignore="NestedWeights" />
 
         <TextView
@@ -52,6 +54,7 @@
         android:textAlignment="textEnd"
         android:text="@string/ingredients_amount"
         android:textSize="12sp"
+        android:ellipsize="end"
         tools:ignore="RtlCompat" />
 
     <ToggleButton

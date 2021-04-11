@@ -42,7 +42,7 @@ class CocktailDetailsPresenter(
             val ingredient = ingredients[view.pos]
             ingredientName(ingredient.name)
             ingredientAlternatives( "")
-            ingredientExists(false)
+            ingredientExists(true)
             ingredientAmount(ingredient.amount)
             loadIngredientView(ingredientsApi.ingredientSmallImageURLByName(ingredient.name))
         }

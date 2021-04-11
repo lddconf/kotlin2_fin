@@ -70,6 +70,7 @@
                 android:layout_marginEnd="@dimen/cocktail_details_margin_end"
                 android:clickable="true"
                 android:focusable="true"
+                android:ellipsize="end"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:maxLines="@integer/recipeCollapsedMaxLines"
                 android:text="@string/sample_recipe_text"
