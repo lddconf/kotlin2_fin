@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CocktailDetailsJSON(
-    val id : String,
-    val strDrink : String,
+    val idDrink : String,
+    val strDrink : String?,
     val strDrinkAlternative : String?,
     val strTags : String?,
     val strVideo : String?,
@@ -20,9 +20,9 @@ data class CocktailDetailsJSON(
     val strInstructionsDE : String?,
     val strInstructionsFR : String?,
     val strInstructionsIT : String?,
-    @SerializedName(value = "strInstructionsZH-HANS")
+    @SerializedName("strInstructionsZH-HANS")
     val strInstructionsZHHANS : String?,
-    @SerializedName(value = "strInstructionsZH-HANT")
+    @SerializedName("strInstructionsZH-HANT")
     val strInstructionsZHHANT : String?,
     val strDrinkThumb : String?,
     val strIngredient1 : String?,
@@ -55,8 +55,8 @@ data class CocktailDetailsJSON(
     val strMeasure13: String?,
     val strMeasure14: String?,
     val strMeasure15: String?,
-    val strImageSource : String,
-    val strImageAttribution : String,
+    val strImageSource : String?,
+    val strImageAttribution : String?,
     val strCreativeCommonsConfirmed: Boolean,
     val dateModified : String
 ) : Parcelable

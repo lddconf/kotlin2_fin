@@ -14,15 +14,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="@dimen/cocktail_details_margin_start"
+                android:layout_marginEnd="@dimen/cocktail_details_margin_end"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,11 +51,11 @@
 
             <ImageView
                 android:id="@+id/cocktail_thumb"
-                android:layout_width="140dp"
+                android:layout_width="300dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:paddingStart="@dimen/cocktail_details_margin_start"
+                android:paddingEnd="@dimen/cocktail_details_margin_end"
                 android:contentDescription="@string/cocktail_view_description"
                 android:src="@drawable/button_favorite" />
 
@@ -63,8 +63,10 @@
                 android:id="@+id/cocktail_recipe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="@dimen/cocktail_details_margin_start"
+                android:layout_marginEnd="@dimen/cocktail_details_margin_end"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"

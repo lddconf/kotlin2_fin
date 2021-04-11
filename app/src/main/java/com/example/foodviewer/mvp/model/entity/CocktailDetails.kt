@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CocktailDetails(
-    val id: String,
-    val strDrink: String,
+    val id: Long,
+    val strDrink: String?,
     val strDrinkAlternative: String?,
     val strTags: String?,
     val strVideo: String?,
@@ -17,14 +17,14 @@ data class CocktailDetails(
     val strInstructions: String?,
     val strDrinkThumb: String?,
     val ingredients: List<IngredientAmount>,
-    val strImageAttribution: String,
+    val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: Boolean,
     val dateModified: String
 ) : Parcelable
 
 
 fun CocktailDetailsJSON.toCocktailDetails() = CocktailDetails(
-    id = id,
+    id = idDrink.toLong(),
     strDrink = strDrink,
     strDrinkAlternative = strDrinkAlternative,
     strTags = strTags,

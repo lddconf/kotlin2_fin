@@ -10,14 +10,15 @@ interface IDataSource {
     fun searchCocktailByName(@Query("s") name: String): Single<CocktailsDetailsJSON>
 
     @GET("search.php")
-    fun listCocktailByLetter(@Query("f") letter: String): Single<CocktailsDetailsJSON>
+    fun listCocktailsByLetter(@Query("f") letter: String): Single<CocktailsDetailsJSON>
 
     @GET("search.php")
     fun searchIngredientByName(@Query("i") name: String): Single<IngredientsDescription>
 
+    @GET("lookup.php")
     fun searchCocktailById(@Query("i") id: Long): Single<CocktailsDetailsJSON>
 
-    @GET("search.php")
+    @GET("lookup.php")
     fun searchIngredientById(@Query("iid") id: Long): Single<IngredientsDescription>
 
     @GET("random.php")

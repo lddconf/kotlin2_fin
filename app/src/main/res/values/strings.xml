@@ -2,7 +2,7 @@
     <string name="app_name">FoodViewer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="cocktail_name_default">Cocktail name</string>
+    <string name="cocktail_name_default">Cocktail name jdslkjfghdskjfhglkjdfhglkjsdhflkjghlkjf</string>
     <string name="sample_recipe_text">
         Hadoop is a data processing tool used to process large size data over distributed
         commodity hardware. The trend of Big Data Hadoop market is on the boom and it’s
@@ -24,4 +24,9 @@
           an in-demand skill in the future.
     </string>
     <string name="cocktail_view_description">Cocktail view</string>
+    <string name="ingredients_name">Ingredients name</string>
+    <string name="ingredients_optional">Ingredients optional</string>
+    <string name="ingredients_amount">Amount</string>
+    <string name="ingredient_image_description">IngreidentDescription</string>
+    <string name="ingredient_exist_image_description">Ingredient exist description</string>
 </resources>

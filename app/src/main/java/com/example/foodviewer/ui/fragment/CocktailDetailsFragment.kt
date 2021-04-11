@@ -1,30 +1,57 @@
 package com.example.foodviewer.ui.fragment
 
 import android.animation.LayoutTransition
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
 import android.widget.ToggleButton
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
+import com.example.foodviewer.mvp.model.api.ApiHolder
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
+import com.example.foodviewer.mvp.model.entity.IngredientAmount
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
+import com.example.foodviewer.mvp.model.requests.RetrofitCocktailDetails
+import com.example.foodviewer.mvp.model.requests.RetrofitIngredientDetails
 import com.example.foodviewer.mvp.presenters.CocktailDetailsPresenter
 import com.example.foodviewer.mvp.view.ICocktailDetailsView
 import com.example.foodviewer.ui.App
+import com.example.foodviewer.ui.adapter.IngredientsAmountRVAdapter
+import com.example.foodviewer.ui.image.GlideImageLoader
 import com.example.foodviewer.ui.listeners.OnBackClickListener
+import com.example.foodviewer.ui.navigation.AndroidAppScreens
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 
-class CocktailDetailsFragment : MvpAppCompatFragment(), ICocktailDetailsView, OnBackClickListener {
+class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
+    OnBackClickListener {
     private var cocktailDetailsBinding: FragmentCoctailDetailsBinding? = null
+    private var adapter: IngredientsAmountRVAdapter? = null
+
+    private val imageLoader: IImageLoader<ImageView> by lazy {
+        GlideImageLoader()
+    }
 
     private val presenter by moxyPresenter {
-        var cocktailDetails: CocktailDetails? = null
+        var cocktailID: Cocktail? = null
         arguments?.let {
-            cocktailDetails = it.getParcelable(COCKTAIL_DETAILS_KEY)
+            cocktailID = it.getParcelable(COCKTAIL_DETAILS_KEY)
         }
-        CocktailDetailsPresenter(cocktailDetails, App.instance.router)
+        CocktailDetailsPresenter(
+            cocktailID,
+            RetrofitCocktailDetails(ApiHolder.api),
+            RetrofitIngredientDetails(ApiHolder.api, ApiHolder.apiTemplateHolder),
+            App.instance.router,
+            AndroidAppScreens(),
+            AndroidSchedulers.mainThread()
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,10 +87,10 @@ class CocktailDetailsFragment : MvpAppCompatFragment(), ICocktailDetailsView, On
         private const val COCKTAIL_DETAILS_KEY = "CocktailDetailsFragment.CocktailDetails"
 
         @JvmStatic
-        fun newInstance(cocktailDetails: CocktailDetails?) =
+        fun newInstance(cocktail: Cocktail?) =
             CocktailDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(COCKTAIL_DETAILS_KEY, cocktailDetails)
+                    putParcelable(COCKTAIL_DETAILS_KEY, cocktail)
                 }
             }
     }
@@ -79,5 +106,36 @@ class CocktailDetailsFragment : MvpAppCompatFragment(), ICocktailDetailsView, On
         cocktailDetailsBinding?.cocktailRecipe?.maxLines = Int.MAX_VALUE
     }
 
+    override fun cocktailName(name: String) {
+        cocktailDetailsBinding?.cocktailName?.text = name
+    }
 
+    override fun favoriteState(state: Boolean) {
+        cocktailDetailsBinding?.cocktailFavorite?.isChecked = state
+    }
+
+    override fun recipeText(text: String) {
+        cocktailDetailsBinding?.cocktailRecipe?.text = text
+    }
+
+    override fun loadCocktailThumb(url: String) {
+        cocktailDetailsBinding?.apply {
+            imageLoader.load(url, cocktailThumb)
+        }
+    }
+
+    override fun initIngredients() {
+        cocktailDetailsBinding?.cocktailIngredients?.layoutManager =
+            LinearLayoutManager(requireContext())
+        adapter = IngredientsAmountRVAdapter(presenter.ingredientAmountPresenter, imageLoader)
+        cocktailDetailsBinding?.cocktailIngredients?.adapter = adapter
+    }
+
+    override fun updateIngredientList() {
+        cocktailDetailsBinding?.cocktailIngredients?.adapter?.notifyDataSetChanged()
+    }
+
+    override fun displayError(description: String) {
+        Toast.makeText(requireContext(), description, Toast.LENGTH_SHORT).show()
+    }
 }

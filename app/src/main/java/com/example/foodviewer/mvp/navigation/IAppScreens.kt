@@ -1,8 +1,8 @@
 package com.example.foodviewer.mvp.navigation
 
-import com.example.foodviewer.mvp.model.entity.CocktailDetails
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.github.terrakok.cicerone.Screen
 
 interface IAppScreens {
-    fun cocktailDetails(cocktailDetails: CocktailDetails?): Screen
+    fun cocktailDetails(cocktail: Cocktail?): Screen
 }

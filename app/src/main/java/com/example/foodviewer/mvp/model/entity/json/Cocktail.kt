@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class Cocktail(
     val strDrink : String,
     val strDrinkThumb : String?,
-    val idDrink : String
+    val idDrink : Long
 ) : Parcelable
