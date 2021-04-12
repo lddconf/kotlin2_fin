@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.example.foodviewer.mvp.model.entity.json.CocktailDetailsJSON
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
 data class CocktailDetails(
     val id: Long,
     val strDrink: String?,
@@ -20,7 +19,7 @@ data class CocktailDetails(
     val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: Boolean,
     val dateModified: String?
-) : Parcelable
+)
 
 
 fun CocktailDetailsJSON.toCocktailDetails() = CocktailDetails(
