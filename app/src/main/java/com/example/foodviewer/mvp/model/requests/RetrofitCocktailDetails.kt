@@ -2,6 +2,7 @@ package com.example.foodviewer.mvp.model.requests
 
 import com.example.foodviewer.mvp.model.api.IDataSource
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.entity.toCocktailDetails
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -55,4 +56,15 @@ class RetrofitCocktailDetails(
                 }
             }
         }.subscribeOn(Schedulers.io())
+
+    override fun cocktailsWithIngredient(name: String): Single<List<Cocktail>> =
+        api.searchCocktailByIngredient(name).flatMap { cocktails->
+            if (cocktails.cocktails.isEmpty()) {
+                Single.error(RuntimeException("No cocktails was found"))
+            } else {
+                Single.fromCallable {
+                    cocktails.cocktails
+                }
+            }
+        }
 }

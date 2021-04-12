@@ -1,18 +1,41 @@
 package com.example.foodviewer.mvp.model.requests
 
 import com.example.foodviewer.mvp.model.api.IDataSource
-import com.example.foodviewer.mvp.model.api.IUrlTemplateHolder
-import com.example.foodviewer.mvp.model.entity.CocktailDetails
-import com.example.foodviewer.mvp.model.entity.toCocktailDetails
+import com.example.foodviewer.mvp.model.api.IIngredientImageUrlSource
+import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import java.lang.RuntimeException
 import java.util.*
 
 class RetrofitIngredientDetails(
     val api: IDataSource,
-    private val urlTemplates: IUrlTemplateHolder
+    private val urlTemplates: IIngredientImageUrlSource
 ) : IIngredientDetails {
     override fun ingredientSmallImageURLByName(name: String) =
-        String.format(Locale.getDefault(), urlTemplates.smallImageURLTempate, name)
+        urlTemplates.ingredientSmallImageURLByName(name)
+
+    override fun ingredientMediumImageURLByName(name: String) =
+        urlTemplates.ingredientMediumImageURLByName(name)
+
+    override fun ingredientById(id: Long): Single<IngredientDetails> =
+        api.searchIngredientById(id).flatMap { ingredients ->
+            if (ingredients.ingredients.isEmpty()) {
+                Single.error(RuntimeException("Ingredient was not found"))
+            } else {
+                Single.fromCallable {
+                    ingredients.ingredients.first()
+                }
+            }
+        }
+
+    override fun ingredientByName(name: String): Single<IngredientDetails> =
+        api.searchIngredientByName(name).flatMap { ingredients ->
+            if (ingredients.ingredients.isEmpty()) {
+                Single.error(RuntimeException("Ingredient was not found"))
+            } else {
+                Single.fromCallable {
+                    ingredients.ingredients.first()
+                }
+            }
+        }
 }

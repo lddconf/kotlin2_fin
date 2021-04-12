@@ -4,11 +4,11 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class IngredientDescription(
+data class IngredientDetails(
     val idIngredient: Long,
     val strIngredient: String,
-    val strDescription: String,
-    val strType: String,
+    val strDescription: String?,
+    val strType: String?,
     val strAlcohol: String? = null,
     val strABV: String? = null
 ) : Parcelable

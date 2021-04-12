@@ -58,13 +58,11 @@ class CocktailDetailsPresenter(
         cocktail?.let {
             loadCocktailDetails()
         }
-/*
+
         ingredientAmountPresenter.itemClickListener = { view->
             val ingredient = ingredientAmountPresenter.ingredients[view.pos]
-            router.navigateTo(screens.ingredientDetails(ingredient))
+            router.navigateTo(screens.ingredientDetails(ingredient.name))
         }
-*/
-
     }
 
     override fun onDestroy() {

@@ -1,11 +1,10 @@
 package com.example.foodviewer.mvp.model.api
 
 import com.google.gson.GsonBuilder
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 
 object ApiHolder {
@@ -20,7 +19,15 @@ object ApiHolder {
             .create(IDataSource::class.java)
     }
 
-    val apiTemplateHolder = object : IUrlTemplateHolder {
-        override val smallImageURLTempate: String = "https://www.thecocktaildb.com/images/ingredients/%s-Small.png"
+    val apiTemplateHolder = object : IIngredientImageUrlSource {
+        private val baseUrl= "https://www.thecocktaildb.com/images/ingredients/"
+
+        override fun ingredientSmallImageURLByName(name: String): String {
+            return String.format(Locale.getDefault(), "$baseUrl%s-Small.png", name)
+        }
+
+        override fun ingredientMediumImageURLByName(name: String): String {
+            return String.format(Locale.getDefault(), "$baseUrl%s-Medium.png", name)
+        }
     }
 }

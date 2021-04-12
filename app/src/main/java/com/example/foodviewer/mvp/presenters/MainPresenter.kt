@@ -19,8 +19,9 @@ class MainPresenter(
             "https://www.thecocktaildb.com/images/media/drink/5noda61589575158.jpg",
             11007
         )
-
         router.navigateTo(screens.cocktailDetails(cocktail))
+        val ingredientName = "Vodka"
+        //router.navigateTo(screens.ingredientDetails(ingredientName))
     }
 
     fun backClicked() {

@@ -5,4 +5,5 @@ import com.github.terrakok.cicerone.Screen
 
 interface IAppScreens {
     fun cocktailDetails(cocktail: Cocktail?): Screen
+    fun ingredientDetails(ingredientName: String?): Screen
 }
