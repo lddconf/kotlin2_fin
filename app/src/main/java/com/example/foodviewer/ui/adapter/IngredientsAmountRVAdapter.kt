@@ -68,6 +68,7 @@ class IngredientsAmountRVAdapter(
                 ingredientExists.visibility = View.INVISIBLE
                 rootLayout.setBackgroundColor(Color.TRANSPARENT)
             } else {
+                ingredientExists.visibility = View.VISIBLE
                 rootLayout.background = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     ingredientExists.context.resources.getColor(R.color.ingredient_exists)
                         .toDrawable()

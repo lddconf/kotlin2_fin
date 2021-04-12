@@ -1,7 +1,5 @@
 package com.example.foodviewer.ui.fragment
 
-import android.animation.LayoutTransition
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
-import com.example.foodviewer.mvp.model.entity.CocktailDetails
-import com.example.foodviewer.mvp.model.entity.IngredientAmount
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.requests.RetrofitCocktailDetails
 import com.example.foodviewer.mvp.model.requests.RetrofitIngredientDetails
@@ -36,13 +32,13 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
     private var adapter: IngredientsAmountRVAdapter? = null
 
     private val imageLoader: IImageLoader<ImageView> by lazy {
-        GlideImageLoader()
+        GlideImageLoader(true)
     }
 
     private val presenter by moxyPresenter {
-        var cocktailID: Cocktail? = null
+        var cocktailID: Long? = null
         arguments?.let {
-            cocktailID = it.getParcelable(COCKTAIL_DETAILS_KEY)
+            cocktailID = it.getLong(COCKTAIL_DETAILS_KEY)
         }
         CocktailDetailsPresenter(
             cocktailID,
@@ -87,10 +83,12 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
         private const val COCKTAIL_DETAILS_KEY = "CocktailDetailsFragment.CocktailDetails"
 
         @JvmStatic
-        fun newInstance(cocktail: Cocktail?) =
+        fun newInstance(cocktailID: Long?) =
             CocktailDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(COCKTAIL_DETAILS_KEY, cocktail)
+                    cocktailID?.let {
+                        putLong(COCKTAIL_DETAILS_KEY, cocktailID)
+                    }
                 }
             }
     }

@@ -19,7 +19,7 @@ data class CocktailDetails(
     val ingredients: List<IngredientAmount>,
     val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: Boolean,
-    val dateModified: String
+    val dateModified: String?
 ) : Parcelable
 
 

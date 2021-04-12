@@ -12,4 +12,5 @@ interface ICocktailDetails {
     fun cocktailById(id: Long): Single<CocktailDetails>
     fun cocktailsByLetter(letter: Char): Single<List<CocktailDetails>>
     fun cocktailsWithIngredient(name: String): Single<List<Cocktail>>
+    fun cocktailSmallImageURLByBaseURL(url: String) : String
 }

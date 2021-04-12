@@ -9,9 +9,9 @@ import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 
 class AndroidAppScreens : IAppScreens {
-    override fun cocktailDetails(cocktail: Cocktail?): Screen =
+    override fun cocktailDetails(cocktailID: Long?): Screen =
         FragmentScreen {
-            CocktailDetailsFragment.newInstance(cocktail)
+            CocktailDetailsFragment.newInstance(cocktailID)
         }
 
     override fun ingredientDetails(ingredient: String?): Screen = FragmentScreen {

@@ -58,5 +58,5 @@ data class CocktailDetailsJSON(
     val strImageSource : String?,
     val strImageAttribution : String?,
     val strCreativeCommonsConfirmed: Boolean,
-    val dateModified : String
+    val dateModified : String?
 ) : Parcelable

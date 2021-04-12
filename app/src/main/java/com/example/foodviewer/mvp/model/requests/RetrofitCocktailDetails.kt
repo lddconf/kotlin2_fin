@@ -11,6 +11,8 @@ import java.lang.RuntimeException
 class RetrofitCocktailDetails(
     val api: IDataSource
 ) : ICocktailDetails {
+    override fun cocktailSmallImageURLByBaseURL(url: String) = "$url/preview"
+
     override fun cocktailsByName(name: String): Single<List<CocktailDetails>> = api.searchCocktailByName(name).flatMap {
         if (it.cocktails.isEmpty()) {
             Single.error(RuntimeException("No cocktails was found"))

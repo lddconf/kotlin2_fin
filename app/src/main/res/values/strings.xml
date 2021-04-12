@@ -9,9 +9,12 @@
     <string name="ingredients_optional">Ingredients optional</string>
     <string name="ingredients_amount">Amount</string>
     <string name="ingredient_image_description">IngreidentDescription</string>
+    <string name="cocktail_with_ingredient_image_description">IngreidentDescription</string>
     <string name="ingredient_exist_image_description">Ingredient exist description</string>
     <string name="ingredient_name">Ingredient name</string>
     <string name="ingredient_description">Ingredient description</string>
     <string name="ingredient_added_to_bar">Added to bar:</string>
     <string name="ingredient_removed_from__bar">Removed from bar:</string>
+    <string name="require_ingredients">Not enough:</string>
+
 </resources>

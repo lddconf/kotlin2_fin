@@ -1,10 +1,14 @@
 package com.example.foodviewer.mvp.presenters
 
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
 import com.example.foodviewer.mvp.model.requests.ICocktailDetails
 import com.example.foodviewer.mvp.model.requests.IIngredientDetails
 import com.example.foodviewer.mvp.navigation.IAppScreens
+import com.example.foodviewer.mvp.presenters.list.ICocktailWithIngredientListPresenter
+import com.example.foodviewer.mvp.presenters.list.ICocktailsWithIngredientView
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
+import com.example.foodviewer.ui.adapter.CocktailWithIngredientRVAdapter
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -21,40 +25,51 @@ class IngredientDetailsPresenter(
 ) : MvpPresenter<IIngredientDetailsView>() {
     private var descriptionCollapsed = false
     private val compositeDisposable = CompositeDisposable()
+
+    val cocktailWithPresenter = CocktailWithIngredientPresenter(cocktailApi, ingredientsApi)
+
+    class CocktailWithIngredientPresenter(
+        val cocktailApi: ICocktailDetails,
+        ingredientsApi: IIngredientDetails
+    ) :
+        ICocktailWithIngredientListPresenter {
+        var cocktailsBrief = mutableListOf<Cocktail>()
+        override var itemClickListener: ((ICocktailsWithIngredientView) -> Unit)? = null
+
+        override fun bindView(view: CocktailWithIngredientRVAdapter.ViewHolder): Unit = with(view) {
+            val cocktail = cocktailsBrief[view.pos]
+            cocktailName(cocktail.strDrink)
+            cocktail.strDrinkThumb?.let {
+                loadCocktailView(cocktailApi.cocktailSmallImageURLByBaseURL(it))
+            }
+
+            ingredients(listOf("1,2,3,4"), false)
 /*
-    val ingredientAmountPresenter = IngredientsAmountPresenter(ingredientsApi)
-
-    class IngredientsAmountPresenter(val ingredientsApi: IIngredientDetails) : IIngredientsAmountListPresenter {
-        var ingredients = mutableListOf<IngredientAmount>()
-        override var itemClickListener: ((IIngredientsAmountItemView) -> Unit)? = null
-
-        override fun bindView(view: IngredientsAmountRVAdapter.ViewHolder) = with(view) {
-            val ingredient = ingredients[view.pos]
             ingredientName(ingredient.name)
             ingredientAlternatives( "")
             ingredientExists(true)
             ingredientAmount(ingredient.amount)
             loadIngredientView(ingredientsApi.ingredientSmallImageURLByName(ingredient.name))
+ */
         }
 
-        override fun getCount(): Int = ingredients.size
+        override fun getCount(): Int = cocktailsBrief.size
     }
-*/
+
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.initCocktailsWith()
 
         ingredientName?.let {
-            loadIngredientDetails()
+            loadData()
         }
-/*
-        ingredientAmountPresenter.itemClickListener = { view->
-            val ingredient = ingredientAmountPresenter.ingredients[view.pos]
-            router.navigateTo(screens.ingredientDetails(ingredient))
-        }
-*/
 
+        //OnClickHandle
+        cocktailWithPresenter.itemClickListener = { view ->
+            val cocktail = cocktailWithPresenter.cocktailsBrief[view.pos]
+            router.navigateTo(screens.cocktailDetails(cocktail.idDrink))
+        }
     }
 
     override fun onDestroy() {
@@ -65,17 +80,14 @@ class IngredientDetailsPresenter(
     fun ingredientDescriptionViewClicked() {
         descriptionCollapsed = descriptionCollapsed.not()
         viewState.collapseIngredientDescription(descriptionCollapsed)
-        //Some stuff code
-        ingredientName?.let {
-            viewState.showIngredientAddedNotification(ingredientName)
-        }
+
     }
 
     fun inBarState(state: Boolean) {
         viewState.inBarState(state)
         //Some stuff code
         ingredientName?.let {
-            if ( state ) {
+            if (state) {
                 viewState.showIngredientAddedNotification(ingredientName)
             } else {
                 viewState.showIngredientRemovedNotification(ingredientName)
@@ -86,6 +98,11 @@ class IngredientDetailsPresenter(
     fun backClick(): Boolean {
         router.exit()
         return true
+    }
+
+    private fun loadData() {
+        loadIngredientDetails()
+        loadCocktailsWithIngredient()
     }
 
     private fun loadIngredientDetails() {
@@ -102,19 +119,32 @@ class IngredientDetailsPresenter(
         }
     }
 
+    private fun loadCocktailsWithIngredient() {
+        ingredientName?.apply {
+            val disposable = cocktailApi.cocktailsWithIngredient(ingredientName)
+                .observeOn(uiSchelduer)
+                .subscribe({ cocktails ->
+                    displayCocktailsWithIngredientsDetails(cocktails)
+                },
+                    { error ->
+                        viewState.displayError(error.localizedMessage ?: "Internal error occurred")
+                    })
+            compositeDisposable.add(disposable)
+        }
+    }
+
+
     private fun displayIngredientDetails(ingredient: IngredientDetails) = with(ingredient) {
         viewState.ingredientName(ingredient.strIngredient)
         viewState.ingredientDescription(strDescription ?: "")
         viewState.inBarState(false) //Check from DB
-
         //Form and load ingredient list
         viewState.loadIngredientThumb(ingredientsApi.ingredientMediumImageURLByName(ingredient.strIngredient))
+    }
 
-        //Request coctails with list
-        /*
-        ingredientAmountPresenter.ingredients.clear()
-        ingredientAmountPresenter.ingredients.addAll(cocktailDetails.ingredients)
+    private fun displayCocktailsWithIngredientsDetails(cocktails: List<Cocktail>) {
+        cocktailWithPresenter.cocktailsBrief.clear()
+        cocktailWithPresenter.cocktailsBrief.addAll(cocktails)
         viewState.updateCocktailsWithList()
-         */
     }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import android.widget.ToggleButton
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
@@ -16,6 +17,7 @@ import com.example.foodviewer.mvp.model.requests.RetrofitIngredientDetails
 import com.example.foodviewer.mvp.presenters.IngredientDetailsPresenter
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
 import com.example.foodviewer.ui.App
+import com.example.foodviewer.ui.adapter.CocktailWithIngredientRVAdapter
 import com.example.foodviewer.ui.adapter.IngredientsAmountRVAdapter
 import com.example.foodviewer.ui.image.GlideImageLoader
 import com.example.foodviewer.ui.listeners.OnBackClickListener
@@ -28,10 +30,10 @@ import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageL
 class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsView,
     OnBackClickListener {
     private var ingredientDetailsBinding: FragmentIngredientDetailsBinding? = null
-    private var adapter: IngredientsAmountRVAdapter? = null
+    private var adapter: CocktailWithIngredientRVAdapter? = null
 
     private val imageLoader: IImageLoader<ImageView> by lazy {
-        GlideImageLoader()
+        GlideImageLoader(true)
     }
 
     private val presenter by moxyPresenter {
@@ -122,12 +124,9 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
     }
 
     override fun initCocktailsWith() {
-        /*
-        ingredientDetailsBinding?.cocktailsWithIndgredient?.layoutManager =
-            LinearLayoutManager(requireContext())
-        adapter = IngredientsAmountRVAdapter(presenter.ingredientAmountPresenter, imageLoader)
-        ingredientDetailsBinding?.cocktailsWithIndgredient?.adapter = adapter
-         */
+        ingredientDetailsBinding?.cocktailsWithIngredient?.layoutManager = LinearLayoutManager(requireContext())
+        adapter = CocktailWithIngredientRVAdapter(presenter.cocktailWithPresenter, imageLoader)
+        ingredientDetailsBinding?.cocktailsWithIngredient?.adapter = adapter
     }
 
     override fun updateCocktailsWithList() {
