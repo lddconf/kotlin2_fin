@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
+import com.example.foodviewer.mvp.model.entity.cache.RoomIngredientsCache
 import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
+import com.example.foodviewer.mvp.model.entity.room.db.Database
 import com.example.foodviewer.mvp.model.requests.RetrofitCocktailDetails
 import com.example.foodviewer.mvp.model.requests.RetrofitIngredientDetails
 import com.example.foodviewer.mvp.presenters.IngredientDetailsPresenter
@@ -44,7 +46,7 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
         IngredientDetailsPresenter(
             ingredientName,
             RetrofitCocktailDetails(ApiHolder.api),
-            RetrofitIngredientDetails(ApiHolder.api, ApiHolder.apiTemplateHolder),
+            RetrofitIngredientDetails(ApiHolder.api, RoomIngredientsCache(Database.getInstance()), ApiHolder.apiTemplateHolder),
             App.instance.router,
             AndroidAppScreens(),
             AndroidSchedulers.mainThread()
@@ -134,7 +136,7 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
     }
 
     override fun displayError(description: String) {
-        Toast.makeText(requireContext(), description, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), description, Toast.LENGTH_LONG).show()
     }
 
     override fun showIngredientAddedNotification(ingredientName: String) {

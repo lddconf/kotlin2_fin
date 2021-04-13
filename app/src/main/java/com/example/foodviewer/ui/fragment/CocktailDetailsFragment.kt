@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
+import com.example.foodviewer.mvp.model.entity.bar.RoomBarProperties
+import com.example.foodviewer.mvp.model.entity.cache.RoomIngredientsCache
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
+import com.example.foodviewer.mvp.model.entity.room.db.Database
 import com.example.foodviewer.mvp.model.requests.RetrofitCocktailDetails
 import com.example.foodviewer.mvp.model.requests.RetrofitIngredientDetails
 import com.example.foodviewer.mvp.presenters.CocktailDetailsPresenter
@@ -43,7 +46,12 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
         CocktailDetailsPresenter(
             cocktailID,
             RetrofitCocktailDetails(ApiHolder.api),
-            RetrofitIngredientDetails(ApiHolder.api, ApiHolder.apiTemplateHolder),
+            RetrofitIngredientDetails(
+                ApiHolder.api,
+                RoomIngredientsCache(Database.getInstance()),
+                ApiHolder.apiTemplateHolder
+            ),
+            RoomBarProperties(Database.getInstance()),
             App.instance.router,
             AndroidAppScreens(),
             AndroidSchedulers.mainThread()

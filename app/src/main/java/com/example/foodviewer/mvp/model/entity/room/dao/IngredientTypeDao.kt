@@ -7,29 +7,29 @@ import com.example.foodviewer.mvp.model.entity.room.RoomIngredientType
 @Dao
 interface IngredientTypeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(ingredient: RoomIngredientType)
+    fun insertIType(type: RoomIngredientType)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(ingredients: List<RoomIngredientType>)
+    fun insertIType(type: List<RoomIngredientType>)
 
     @Update
-    fun update(ingredient: RoomIngredientType)
+    fun updateIType(type: RoomIngredientType)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(ingredients: List<RoomIngredientType>)
+    fun updateIType(type: List<RoomIngredientType>)
 
     @Delete
-    fun delete(ingredient: RoomIngredientType)
+    fun deleteIType(type: RoomIngredientType)
 
     @Delete
-    fun delete(ingredients: List<RoomIngredientType>)
+    fun deleteIType(type: List<RoomIngredientType>)
 
     @Query("SELECT * from RoomIngredientType")
     fun getAll() : List<RoomIngredientType>
 
     @Query("SELECT * FROM RoomIngredientType WHERE id = :idIngredientType LIMIT 1")
-    fun findById(idIngredientType: Long) :  RoomIngredientType
+    fun findITypeById(idIngredientType: Long) :  RoomIngredientType
 
     @Query("SELECT * FROM RoomIngredientType WHERE typeName = :ingredientType LIMIT 1")
-    fun findByName(ingredientType: String) :  RoomIngredientType
+    fun findITypeByName(ingredientType: String) :  RoomIngredientType
 }

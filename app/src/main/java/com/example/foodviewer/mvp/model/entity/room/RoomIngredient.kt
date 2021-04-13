@@ -3,7 +3,7 @@ package com.example.foodviewer.mvp.model.entity.room
 import androidx.room.*
 
 @Entity
-class RoomIngredient(
+data class RoomIngredient(
     @Embedded
     val roomIngredientRecord: RoomIngredientRecord,
 

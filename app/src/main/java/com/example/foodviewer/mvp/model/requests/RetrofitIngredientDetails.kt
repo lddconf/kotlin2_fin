@@ -2,6 +2,7 @@ package com.example.foodviewer.mvp.model.requests
 
 import com.example.foodviewer.mvp.model.api.IDataSource
 import com.example.foodviewer.mvp.model.api.IIngredientImageUrlSource
+import com.example.foodviewer.mvp.model.entity.cache.IIngredientsCache
 import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
 import io.reactivex.rxjava3.core.Single
 import java.lang.RuntimeException
@@ -9,6 +10,7 @@ import java.util.*
 
 class RetrofitIngredientDetails(
     val api: IDataSource,
+    val cache : IIngredientsCache,
     private val urlTemplates: IIngredientImageUrlSource
 ) : IIngredientDetails {
     override fun ingredientSmallImageURLByName(name: String) =
@@ -23,6 +25,7 @@ class RetrofitIngredientDetails(
                 Single.error(RuntimeException("Ingredient was not found"))
             } else {
                 Single.fromCallable {
+                    cache.put(ingredients.ingredients)
                     ingredients.ingredients.first()
                 }
             }
@@ -34,6 +37,7 @@ class RetrofitIngredientDetails(
                 Single.error(RuntimeException("Ingredient was not found"))
             } else {
                 Single.fromCallable {
+                    cache.put(ingredients.ingredients)
                     ingredients.ingredients.first()
                 }
             }

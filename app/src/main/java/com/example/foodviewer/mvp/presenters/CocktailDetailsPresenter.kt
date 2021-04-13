@@ -2,6 +2,7 @@ package com.example.foodviewer.mvp.presenters
 
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
 import com.example.foodviewer.mvp.model.entity.IngredientAmount
+import com.example.foodviewer.mvp.model.entity.bar.IBarProperties
 import com.example.foodviewer.mvp.model.requests.ICocktailDetails
 import com.example.foodviewer.mvp.model.requests.IIngredientDetails
 import com.example.foodviewer.mvp.navigation.IAppScreens
@@ -19,6 +20,7 @@ class CocktailDetailsPresenter(
     val cocktailId: Long?,
     val api: ICocktailDetails,
     val ingredientsApi: IIngredientDetails,
+    val barProperties: IBarProperties,
     val router: Router,
     val screens: IAppScreens,
     val uiSchelduer: Scheduler
@@ -27,20 +29,28 @@ class CocktailDetailsPresenter(
     private val compositeDisposable = CompositeDisposable()
 
 
-    val ingredientAmountPresenter = IngredientsAmountPresenter(ingredientsApi)
+    val ingredientAmountPresenter =
+        IngredientsAmountPresenter(ingredientsApi)
 
-    class IngredientsAmountPresenter(val ingredientsApi: IIngredientDetails) :
+    class IngredientsAmountPresenter(
+        val ingredientsApi: IIngredientDetails
+    ) :
         IIngredientsAmountListPresenter {
-        var ingredients = mutableListOf<IngredientAmount>()
+
+        var ingredients = mutableListOf<Pair<IngredientAmount, Boolean>>()
+
         override var itemClickListener: ((IIngredientsAmountItemView) -> Unit)? = null
 
         override fun bindView(view: IngredientsAmountRVAdapter.ViewHolder) = with(view) {
             val ingredient = ingredients[view.pos]
-            ingredientName(ingredient.name)
-            ingredientAlternatives("")
-            ingredientExists(true)
-            ingredientAmount(ingredient.amount)
-            loadIngredientView(ingredientsApi.ingredientSmallImageURLByName(ingredient.name))
+
+            with(ingredient.first) {
+                ingredientName(name)
+                ingredientAlternatives("")
+                ingredientAmount(amount)
+                loadIngredientView(ingredientsApi.ingredientSmallImageURLByName(name))
+            }
+            ingredientExists(ingredient.second)
         }
 
         override fun getCount(): Int = ingredients.size
@@ -57,7 +67,7 @@ class CocktailDetailsPresenter(
 
         ingredientAmountPresenter.itemClickListener = { view ->
             val ingredient = ingredientAmountPresenter.ingredients[view.pos]
-            router.navigateTo(screens.ingredientDetails(ingredient.name))
+            router.navigateTo(screens.ingredientDetails(ingredient.first.name))
         }
     }
 
@@ -85,24 +95,46 @@ class CocktailDetailsPresenter(
             val disposable = api.cocktailById(cocktailId)
                 .observeOn(uiSchelduer)
                 .subscribe({ cocktailDetails ->
-                    displayCocktailDetails(cocktailDetails)
+                    val ingredientNames = cocktailDetails.ingredients.map { it.name }
+                    barProperties.ingredientPresentByNames(ingredientNames).observeOn(uiSchelduer)
+                        .subscribe({
+                            displayCocktailDetails(
+                                cocktailDetails,
+                                cocktailDetails.ingredients.zip(it)
+                            )
+                        },
+                            { error ->
+                                displayCocktailDetails(
+                                    cocktailDetails,
+                                    cocktailDetails.ingredients.zip(MutableList(cocktailDetails.ingredients.size) { index -> false })
+                                )
+                                viewState.displayError(
+                                    error.localizedMessage ?: "Internal error occurred"
+                                )
+                            })
                 },
                     { error ->
                         viewState.displayError(error.localizedMessage ?: "Internal error occurred")
                     })
+
+
             compositeDisposable.add(disposable)
 
         }
     }
 
-    private fun displayCocktailDetails(cocktailDetails: CocktailDetails) = with(cocktailDetails) {
+    private fun displayCocktailDetails(
+        cocktailDetails: CocktailDetails,
+        ingredientsPresent: List<Pair<IngredientAmount, Boolean>>
+    ) = with(cocktailDetails) {
         viewState.cocktailName(strDrink ?: "")
         viewState.recipeText(strInstructions ?: "")
         viewState.favoriteState(false) //Check from DB
         viewState.loadCocktailThumb(strDrinkThumb ?: "")
 
+
         ingredientAmountPresenter.ingredients.clear()
-        ingredientAmountPresenter.ingredients.addAll(cocktailDetails.ingredients)
+        ingredientAmountPresenter.ingredients.addAll(ingredientsPresent)
         viewState.updateIngredientList()
     }
 }

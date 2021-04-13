@@ -9,6 +9,6 @@ data class IngredientDetails(
     val strIngredient: String,
     val strDescription: String?,
     val strType: String?,
-    val strAlcohol: String? = null,
-    val strABV: String? = null
+    val strAlcohol: String?,
+    val strABV: String?
 ) : Parcelable

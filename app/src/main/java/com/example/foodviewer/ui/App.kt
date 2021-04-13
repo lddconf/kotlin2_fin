@@ -1,6 +1,7 @@
 package com.example.foodviewer.ui
 
 import android.app.Application
+import com.example.foodviewer.mvp.model.entity.room.db.Database
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 
@@ -23,7 +24,8 @@ class App : Application() {
 
 
     override fun onCreate() {
-        instance = this
         super.onCreate()
+        instance = this
+        Database.create(this)
     }
 }

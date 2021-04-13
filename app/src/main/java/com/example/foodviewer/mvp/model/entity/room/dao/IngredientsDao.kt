@@ -1,40 +1,74 @@
 package com.example.foodviewer.mvp.model.entity.room.dao
 
 import androidx.room.*
+import com.example.foodviewer.mvp.model.entity.json.IngredientType
 import com.example.foodviewer.mvp.model.entity.room.RoomIngredient
+import com.example.foodviewer.mvp.model.entity.room.RoomIngredientType
 
 @Dao
-interface IngredientsDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(ingredient: RoomIngredient)
+abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
+    fun insert(ingredient: RoomIngredient) = ingredient.apply {
+        var type : RoomIngredientType?
+        type = findITypeByName(ingredientType.typeName ?: "")
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(ingredients: List<RoomIngredient>)
+        if (type == null) {
+            insertIType(ingredient.ingredientType)
+            type = findITypeByName(ingredientType.typeName ?: "")
+        }
 
-    @Update
-    fun update(ingredient: RoomIngredient)
+        type?.let {
+            val ingredientRecord = roomIngredientRecord.copy(strType = it.id)
+            insertIR(ingredientRecord)
+        }
+    }
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(ingredients: List<RoomIngredient>)
+    fun insert(ingredients: List<RoomIngredient>) = ingredients.forEach {
+        insert(it)
+    }
 
-    @Delete
-    fun delete(ingredient: RoomIngredient)
+    fun update(ingredient: RoomIngredient) = ingredient.apply {
+        var ingredientType = ingredient.ingredientType
+        ingredientType = try {
+            findITypeByName(ingredientType.typeName ?: "")
+        } catch (e: Throwable) {
+            insertIType(ingredient.ingredientType)
+            findITypeByName(ingredientType.typeName ?: "")
+        }
 
-    @Delete
-    fun delete(ingredients: List<RoomIngredient>)
+        val ingredientRecord = roomIngredientRecord.copy(strType = ingredientType.id)
+        updateIR(ingredient.roomIngredientRecord)
+    }
 
-    @Query("SELECT * from RoomIngredient")
-    fun getAll() : List<RoomIngredient>
+    fun delete(ingredient: RoomIngredient) = deleteIR(ingredient.roomIngredientRecord)
 
-    @Query("SELECT * FROM RoomIngredient WHERE inBar > 0")
-    fun getAllIngredientsInBar() :  List<RoomIngredient>
+    fun delete(ingredients: List<RoomIngredient>) = ingredients.map {
+        it.roomIngredientRecord
+    }.apply {
+        deleteIR(this)
+    }
 
-    @Query("SELECT * FROM RoomIngredient WHERE idIngredient = :idIngredient LIMIT 1")
-    fun findById(idIngredient: Long) :  RoomIngredient
+    @Transaction
+    @Query("SELECT * from RoomIngredientRecord")
+    abstract fun getAllIngredients(): List<RoomIngredient>
+/*
+    @Transaction
+    @Query("SELECT * FROM RoomIngredientRecord WHERE inBar > 0")
+    abstract fun getAllIngredientsInBar(): List<RoomIngredient>
 
-    @Query("SELECT * FROM RoomIngredient WHERE strIngredient = :ingredientName LIMIT 1")
-    fun findByName(ingredientName: Long) :  RoomIngredient
+    @Transaction
+    @Query("SELECT inBar FROM RoomIngredientRecord WHERE idIngredient = :idIngredient LIMIT 1")
+    abstract fun getIngredientsInBarById(idIngredient: Long): Int
+*/
 
-    @Query("SELECT * FROM RoomIngredient WHERE strType = :ingredientTypeId")
-    fun selectByTypeId(ingredientTypeId: Long) :  List<RoomIngredient>
+    @Transaction
+    @Query("SELECT * FROM RoomIngredientRecord WHERE idIngredient = :idIngredient LIMIT 1")
+    abstract fun findIngredientById(idIngredient: Long): RoomIngredient
+
+    @Transaction
+    @Query("SELECT * FROM RoomIngredientRecord WHERE strIngredient = :ingredientName LIMIT 1")
+    abstract fun findIngredientByName(ingredientName: Long): RoomIngredient
+
+    @Transaction
+    @Query("SELECT * FROM RoomIngredientRecord WHERE strType = :ingredientTypeId")
+    abstract fun selectIngredientByTypeId(ingredientTypeId: Long): List<RoomIngredient>
 }
