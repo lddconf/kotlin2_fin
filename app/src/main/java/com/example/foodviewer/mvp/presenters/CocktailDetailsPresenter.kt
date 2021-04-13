@@ -116,10 +116,7 @@ class CocktailDetailsPresenter(
                     { error ->
                         viewState.displayError(error.localizedMessage ?: "Internal error occurred")
                     })
-
-
             compositeDisposable.add(disposable)
-
         }
     }
 

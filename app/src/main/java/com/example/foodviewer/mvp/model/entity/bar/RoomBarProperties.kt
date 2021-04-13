@@ -61,6 +61,6 @@ class RoomBarProperties(val db: Database) : IBarProperties {
                     } ?: false
                 )
             }
-            list
-        }
+            list.toList()
+        }.subscribeOn(Schedulers.io())
 }
