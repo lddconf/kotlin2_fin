@@ -14,8 +14,7 @@ data class RoomCocktailRecord(
     val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: Boolean,
     val dateModified: String?,
-    val strAlcoholicId: Long,
-    val strGlassId: Long,
-    val strCategoryId: Long,
-    val strInstructions: String?
+    val strAlcoholicId: Long?,
+    val strGlassId: Long?,
+    val strCategoryId: Long?
 )

@@ -6,26 +6,26 @@ import com.example.foodviewer.mvp.model.entity.room.RoomCocktailCategory
 @Dao
 interface CocktailCategoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktailRecipe: RoomCocktailCategory)
+    fun insertCCategory(cocktailRecipe: RoomCocktailCategory)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktailRecipe: List<RoomCocktailCategory>)
+    fun insertCCategory(cocktailRecipe: List<RoomCocktailCategory>)
 
     @Update
-    fun update(cocktailRecipe: RoomCocktailCategory)
+    fun updateCCategory(cocktailRecipe: RoomCocktailCategory)
 
     @Update
-    fun update(cocktailRecipe: List<RoomCocktailCategory>)
+    fun updateCCategory(cocktailRecipe: List<RoomCocktailCategory>)
 
     @Delete
-    fun delete(cocktailRecipe: RoomCocktailCategory)
+    fun deleteCCategory(cocktailRecipe: RoomCocktailCategory)
 
     @Delete
-    fun delete(cocktailRecipe: List<RoomCocktailCategory>)
+    fun deleteCCategory(cocktailRecipe: List<RoomCocktailCategory>)
 
     @Query("SELECT * FROM RoomCocktailCategory WHERE id = :categoryId LIMIT 1")
-    fun findById(categoryId: Long) :  RoomCocktailCategory
+    fun findCCategoryById(categoryId: Long) :  RoomCocktailCategory?
 
     @Query("SELECT * FROM RoomCocktailCategory WHERE strCategory = :categoryName LIMIT 1")
-    fun findByName(categoryName: Long) : RoomCocktailCategory
+    fun findCCategoryByName(categoryName: String) : RoomCocktailCategory?
 }

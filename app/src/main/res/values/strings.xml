@@ -17,4 +17,7 @@
     <string name="ingredient_removed_from__bar">Removed from bar:</string>
     <string name="require_ingredients">Not enough:</string>
 
+    <string name="cocktail_added_to_favorites">Added to favorites</string>
+    <string name="cocktail_removed_from_favorites">Removed from favorites</string>
+
 </resources>

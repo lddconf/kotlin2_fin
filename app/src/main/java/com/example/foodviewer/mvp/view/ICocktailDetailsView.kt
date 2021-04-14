@@ -20,6 +20,11 @@ interface ICocktailDetailsView : MvpView {
 
     fun loadCocktailThumb(url: String)
 
+    @Skip
+    fun showCocktailAddedToFavoriteNotification()
+    @Skip
+    fun showCocktailRemovedFromFavoriteNotification()
+
     fun initIngredients()
     fun updateIngredientList()
 }

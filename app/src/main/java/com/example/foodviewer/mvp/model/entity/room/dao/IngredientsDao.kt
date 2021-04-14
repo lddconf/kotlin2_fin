@@ -4,6 +4,7 @@ import androidx.room.*
 import com.example.foodviewer.mvp.model.entity.json.IngredientType
 import com.example.foodviewer.mvp.model.entity.room.RoomIngredient
 import com.example.foodviewer.mvp.model.entity.room.RoomIngredientType
+import java.lang.RuntimeException
 
 @Dao
 abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
@@ -19,24 +20,25 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
         type?.let {
             val ingredientRecord = roomIngredientRecord.copy(strType = it.id)
             insertIR(ingredientRecord)
-        }
+        } ?: throw RuntimeException("Invalid insert argument")
     }
 
     fun insert(ingredients: List<RoomIngredient>) = ingredients.forEach {
         insert(it)
     }
 
-    fun update(ingredient: RoomIngredient) = ingredient.apply {
-        var ingredientType = ingredient.ingredientType
-        ingredientType = try {
-            findITypeByName(ingredientType.typeName ?: "")
-        } catch (e: Throwable) {
+    fun update(ingredient: RoomIngredient) {
+        var ingredientType = findITypeByName(ingredient.ingredientType.typeName ?: "")
+
+        if ( ingredientType == null ) {
             insertIType(ingredient.ingredientType)
-            findITypeByName(ingredientType.typeName ?: "")
+            findITypeByName(ingredient.ingredientType.typeName ?: "")
         }
 
-        val ingredientRecord = roomIngredientRecord.copy(strType = ingredientType.id)
-        updateIR(ingredient.roomIngredientRecord)
+        ingredientType?.let {
+            val ingredientRecord = ingredient.roomIngredientRecord.copy(strType = ingredientType.id)
+            updateIR(ingredientRecord)
+        } ?: throw RuntimeException("Invalid update argument")
     }
 
     fun delete(ingredient: RoomIngredient) = deleteIR(ingredient.roomIngredientRecord)

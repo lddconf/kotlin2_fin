@@ -16,5 +16,8 @@ data class RoomCocktail(
     val glass: RoomCocktailGlass,
 
     @Relation(parentColumn = "strCategoryId", entityColumn = "id")
-    val category: RoomCocktailCategory
+    val category: RoomCocktailCategory,
+
+    @Relation(parentColumn = "strInstructions", entityColumn = "cocktailId")
+    val recipe : List<RoomCocktailRecipeRecord>
 )

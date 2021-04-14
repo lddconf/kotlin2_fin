@@ -12,8 +12,9 @@ import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
 import com.example.foodviewer.mvp.model.entity.bar.RoomBarProperties
+import com.example.foodviewer.mvp.model.entity.bar.RoomFavoriteCocktails
+import com.example.foodviewer.mvp.model.entity.cache.RoomCocktailsCache
 import com.example.foodviewer.mvp.model.entity.cache.RoomIngredientsCache
-import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.entity.room.db.Database
 import com.example.foodviewer.mvp.model.requests.RetrofitCocktailDetails
 import com.example.foodviewer.mvp.model.requests.RetrofitIngredientDetails
@@ -30,7 +31,7 @@ import moxy.ktx.moxyPresenter
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 
 class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
-    OnBackClickListener {
+        OnBackClickListener {
     private var cocktailDetailsBinding: FragmentCoctailDetailsBinding? = null
     private var adapter: IngredientsAmountRVAdapter? = null
 
@@ -44,17 +45,18 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
             cocktailID = it.getLong(COCKTAIL_DETAILS_KEY)
         }
         CocktailDetailsPresenter(
-            cocktailID,
-            RetrofitCocktailDetails(ApiHolder.api),
-            RetrofitIngredientDetails(
-                ApiHolder.api,
-                RoomIngredientsCache(Database.getInstance()),
-                ApiHolder.apiTemplateHolder
-            ),
-            RoomBarProperties(Database.getInstance()),
-            App.instance.router,
-            AndroidAppScreens(),
-            AndroidSchedulers.mainThread()
+                cocktailID,
+                RetrofitCocktailDetails(ApiHolder.api, RoomCocktailsCache(Database.getInstance())),
+                RetrofitIngredientDetails(
+                        ApiHolder.api,
+                        RoomIngredientsCache(Database.getInstance()),
+                        ApiHolder.apiTemplateHolder
+                ),
+                RoomBarProperties(Database.getInstance()),
+                RoomFavoriteCocktails(Database.getInstance()),
+                App.instance.router,
+                AndroidAppScreens(),
+                AndroidSchedulers.mainThread()
         )
     }
 
@@ -63,8 +65,8 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? = FragmentCoctailDetailsBinding.inflate(inflater, container, false).also {
         cocktailDetailsBinding = it
     }.root
@@ -92,13 +94,13 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
 
         @JvmStatic
         fun newInstance(cocktailID: Long?) =
-            CocktailDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    cocktailID?.let {
-                        putLong(COCKTAIL_DETAILS_KEY, cocktailID)
+                CocktailDetailsFragment().apply {
+                    arguments = Bundle().apply {
+                        cocktailID?.let {
+                            putLong(COCKTAIL_DETAILS_KEY, cocktailID)
+                        }
                     }
                 }
-            }
     }
 
     override fun onBackClicked(): Boolean = presenter.backClick()
@@ -106,7 +108,7 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
     override fun collapseRecipeText(collapse: Boolean) {
         if (collapse) {
             cocktailDetailsBinding?.cocktailRecipe?.maxLines =
-                requireContext().resources.getInteger(R.integer.recipeCollapsedMaxLines)
+                    requireContext().resources.getInteger(R.integer.recipeCollapsedMaxLines)
             return
         }
         cocktailDetailsBinding?.cocktailRecipe?.maxLines = Int.MAX_VALUE
@@ -132,7 +134,7 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
 
     override fun initIngredients() {
         cocktailDetailsBinding?.cocktailIngredients?.layoutManager =
-            LinearLayoutManager(requireContext())
+                LinearLayoutManager(requireContext())
         adapter = IngredientsAmountRVAdapter(presenter.ingredientAmountPresenter, imageLoader)
         cocktailDetailsBinding?.cocktailIngredients?.adapter = adapter
     }
@@ -143,5 +145,21 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
 
     override fun displayError(description: String) {
         Toast.makeText(requireContext(), description, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showCocktailAddedToFavoriteNotification() {
+        Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.cocktail_added_to_favorites),
+                Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun showCocktailRemovedFromFavoriteNotification() {
+        Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.cocktail_removed_from_favorites),
+                Toast.LENGTH_SHORT
+        ).show()
     }
 }

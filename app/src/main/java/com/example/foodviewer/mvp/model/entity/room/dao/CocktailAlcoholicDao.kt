@@ -8,26 +8,26 @@ import com.example.foodviewer.mvp.model.entity.room.RoomCocktailRecord
 @Dao
 interface CocktailAlcoholicDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktailRecipe: RoomCocktailAlcoholic)
+    fun insertCAlcoholic(cocktailRecipe: RoomCocktailAlcoholic)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktailRecipe: List<RoomCocktailAlcoholic>)
+    fun insertCAlcoholic(cocktailRecipe: List<RoomCocktailAlcoholic>)
 
     @Update
-    fun update(cocktailRecipe: RoomCocktailAlcoholic)
+    fun updateCAlcoholic(cocktailRecipe: RoomCocktailAlcoholic)
 
     @Update
-    fun update(cocktailRecipe: List<RoomCocktailAlcoholic>)
+    fun updateCAlcoholic(cocktailRecipe: List<RoomCocktailAlcoholic>)
 
     @Delete
-    fun delete(cocktailRecipe: RoomCocktailAlcoholic)
+    fun deleteCAlcoholic(cocktailRecipe: RoomCocktailAlcoholic)
 
     @Delete
-    fun delete(cocktailRecipe: List<RoomCocktailAlcoholic>)
+    fun deleteCAlcoholic(cocktailRecipe: List<RoomCocktailAlcoholic>)
 
     @Query("SELECT * FROM RoomCocktailAlcoholic WHERE id = :alcoholicId LIMIT 1")
-    fun findById(alcoholicId: Long) :  RoomCocktailAlcoholic
+    fun findCAlcoholicById(alcoholicId: Long) :  RoomCocktailAlcoholic?
 
     @Query("SELECT * FROM RoomCocktailAlcoholic WHERE strAlcoholic = :alcoholicName LIMIT 1")
-    fun findByName(alcoholicName: Long) :  RoomCocktailAlcoholic
+    fun findCAlcoholicByName(alcoholicName: String) :  RoomCocktailAlcoholic?
 }

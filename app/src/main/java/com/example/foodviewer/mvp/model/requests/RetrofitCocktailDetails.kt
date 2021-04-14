@@ -2,6 +2,7 @@ package com.example.foodviewer.mvp.model.requests
 
 import com.example.foodviewer.mvp.model.api.IDataSource
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
+import com.example.foodviewer.mvp.model.entity.cache.ICocktailsCache
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.entity.toCocktailDetails
 import io.reactivex.rxjava3.core.Single
@@ -9,7 +10,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.lang.RuntimeException
 
 class RetrofitCocktailDetails(
-    val api: IDataSource
+    val api: IDataSource,
+    val cocktailCache : ICocktailsCache
 ) : ICocktailDetails {
     override fun cocktailSmallImageURLByBaseURL(url: String) = "$url/preview"
 
@@ -18,9 +20,11 @@ class RetrofitCocktailDetails(
             Single.error(RuntimeException("No cocktails was found"))
         } else {
             Single.fromCallable {
-                it.cocktails.map { cocktailDetails ->
+                val cocktails = it.cocktails.map { cocktailDetails ->
                     cocktailDetails.toCocktailDetails()
                 }
+                cocktailCache.put(cocktails)
+                cocktails
             }
         }
     }.subscribeOn(Schedulers.io())
@@ -30,6 +34,10 @@ class RetrofitCocktailDetails(
             Single.error(RuntimeException("Random cocktail was not generated"))
         } else {
             Single.fromCallable {
+                val cocktails = it.cocktails.map { cocktailDetails ->
+                    cocktailDetails.toCocktailDetails()
+                }
+                cocktailCache.put(cocktails)
                 it.cocktails.first().toCocktailDetails()
             }
         }
@@ -41,6 +49,10 @@ class RetrofitCocktailDetails(
                 Single.error(RuntimeException("No cocktail was found"))
             } else {
                 Single.fromCallable {
+                    val cocktails = it.cocktails.map { cocktailDetails ->
+                        cocktailDetails.toCocktailDetails()
+                    }
+                    cocktailCache.put(cocktails)
                     it.cocktails.first().toCocktailDetails()
                 }
             }
@@ -52,9 +64,11 @@ class RetrofitCocktailDetails(
                 Single.error(RuntimeException("No cocktails was found"))
             } else {
                 Single.fromCallable {
-                    it.cocktails.map { cocktailDetails ->
+                    val cocktails = it.cocktails.map { cocktailDetails ->
                         cocktailDetails.toCocktailDetails()
                     }
+                    cocktailCache.put(cocktails)
+                    cocktails
                 }
             }
         }.subscribeOn(Schedulers.io())

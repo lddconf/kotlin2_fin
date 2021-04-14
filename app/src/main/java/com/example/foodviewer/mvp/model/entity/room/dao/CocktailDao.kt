@@ -1,72 +1,92 @@
 package com.example.foodviewer.mvp.model.entity.room.dao
 
 import androidx.room.*
-import com.example.foodviewer.mvp.model.entity.room.RoomCocktailRecord
-import com.example.foodviewer.mvp.model.entity.room.RoomCocktailsWithRecipe
-import com.example.foodviewer.mvp.model.entity.room.RoomIngredient
+import com.example.foodviewer.mvp.model.entity.room.*
+import java.util.function.Predicate
 
 @Dao
-abstract class CocktailDao {
-    /*
-    fun insert(cocktail: RoomCocktailsWithRecipe) {
-        cocktail.recipe.forEach { recipeRecord->
-            recipeRecord.cocktailId = cocktail.cocktail.roomCocktailRecord.id
+abstract class CocktailDao : CocktailAlcoholicDao, CocktailCategoryDao, CocktailGlassDao, CocktailRecipeDao, CocktailRecordDao {
+    fun insertCocktail(cocktailWithRecipe: RoomCocktailWithRecipe) {
+        var alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
+        var glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
+        var categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
+
+        if (alcoholicP == null) {
+            insertCAlcoholic(cocktailWithRecipe.alcoholic)
+            alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
+        }
+        if (glassP == null) {
+            insertCGlass(cocktailWithRecipe.glass)
+            glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
+        }
+        if (categoryP == null) {
+            insertCCategory(cocktailWithRecipe.category)
+            categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
         }
 
+        val existingRecipes = findCRecipeByCocktailId(cocktailWithRecipe.cocktail.id)
+        if ( existingRecipes.zip(cocktailWithRecipe.recipe).all { (old, new) ->
+            old.ingredientName == new.ingredientName && old.recipe == new.recipe
+        }.not() ) { //Delete old recipes. Save new.
+            deleteCRecipe(existingRecipes)
+            insertCRecipe(cocktailWithRecipe.recipe)
+        }
+
+        val cWithRecipe = cocktailWithRecipe.cocktail.copy(
+                strAlcoholicId = alcoholicP?.id,
+                strGlassId = glassP?.id,
+                strCategoryId = categoryP?.id
+        )
+        insertCRecord(cWithRecipe)
     }
-*/
 
-/*
-    @Update
-    abstract fun update(cocktail: RoomCocktailRecord)
+    fun insertCocktail(cocktailsWithRecipe: List<RoomCocktailWithRecipe>) = cocktailsWithRecipe.forEach {
+        insertCocktail(it)
+    }
 
-    @Update
-    abstract fun update(cocktail: List<RoomCocktailRecord>)
+    fun update(cocktailWithRecipe: RoomCocktailWithRecipe) {
+        var alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
+        var glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
+        var categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
 
-    @Delete
-    abstract fun delete(cocktail: RoomCocktailRecord)
+        if (alcoholicP == null) {
+            insertCAlcoholic(cocktailWithRecipe.alcoholic)
+            alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
+        }
+        if (glassP == null) {
+            insertCGlass(cocktailWithRecipe.glass)
+            glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
+        }
+        if (categoryP == null) {
+            insertCCategory(cocktailWithRecipe.category)
+            categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
+        }
 
-    @Delete
-    abstract fun delete(cocktail: List<RoomCocktailRecord>)
-*/
-    @Transaction @Query("SELECT * FROM RoomCocktailRecord WHERE id = :cocktailId LIMIT 1")
-    abstract fun findById(cocktailId: Long) :  RoomCocktailsWithRecipe
-/*
-    @Query("SELECT * FROM RoomCocktailsWithRecipe WHERE strDrink = :cocktailName LIMIT 1")
-    abstract fun findByName(cocktailName: Long) :  RoomCocktailRecord
- */
+        val existingRecipes = findCRecipeByCocktailId(cocktailWithRecipe.cocktail.id)
+        if ( existingRecipes.zip(cocktailWithRecipe.recipe).all { (old, new) ->
+                    old.ingredientName == new.ingredientName && old.recipe == new.recipe
+                }.not() ) { //Delete old recipes. Save new.
+            deleteCRecipe(existingRecipes)
+            insertCRecipe(cocktailWithRecipe.recipe)
+        }
+
+        val cWithRecipe = cocktailWithRecipe.cocktail.copy(
+                strAlcoholicId = alcoholicP?.id,
+                strGlassId = glassP?.id,
+                strCategoryId = categoryP?.id
+        )
+        updateCRecord(cWithRecipe)
+    }
+
+    fun delete(cocktail: RoomCocktailWithRecipe) = deleteCRecord(cocktail.cocktail)
+
+    fun delete(cocktails: List<RoomCocktailWithRecipe>) = deleteCRecord(cocktails.map { it.cocktail })
+
+    @Transaction
+    @Query("SELECT * FROM RoomCocktailRecord WHERE id = :cocktailId LIMIT 1")
+    abstract fun findCocktailById(cocktailId: Long): RoomCocktailWithRecipe
+
+    @Transaction
+    @Query("SELECT * FROM RoomCocktailRecord WHERE strDrink = :cocktailName LIMIT 1")
+    abstract fun findCocktailByName(cocktailName: Long): RoomCocktailWithRecipe
 }
-
-/*
-
- @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktail: RoomCocktailsWithRecipe)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktail: List<RoomCocktailsWithRecipe>)
-
-    @Update
-    fun update(cocktail: RoomCocktailsWithRecipe)
-
-    @Update
-    fun update(cocktail: List<RoomCocktailsWithRecipe>)
-
-    @Delete
-    fun delete(cocktail: RoomCocktailsWithRecipe)
-
-    @Delete
-    fun delete(cocktail: List<RoomCocktailsWithRecipe>)
-
-    @Query("SELECT * from RoomCocktailsWithRecipe")
-    fun getAll() : List<RoomCocktailsWithRecipe>
-
-    @Query("SELECT * FROM RoomCocktailsWithRecipe WHERE RoomCocktailsWithRecipe.id = :cocktailId LIMIT 1")
-    fun findById(cocktailId: Long) :  RoomCocktailsWithRecipe
-
-    @Query("SELECT * FROM RoomCocktailsWithRecipe WHERE RoomCocktailsWithRecipe.strDrink = :cocktailName LIMIT 1")
-    fun findByName(cocktailName: Long) :  RoomCocktailsWithRecipe
-
-    @Query("SELECT * FROM RoomIngredient WHERE strType = :ingredientTypeId")
-    fun selectByTypeId(ingredientTypeId: Long) :  List<RoomCocktailsWithRecipe>
-
- */

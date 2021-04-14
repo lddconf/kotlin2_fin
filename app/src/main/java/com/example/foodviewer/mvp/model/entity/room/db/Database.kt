@@ -16,21 +16,17 @@ import java.lang.IllegalStateException
         RoomCocktailRecipeRecord::class,
         RoomCocktailRecord::class,
         RoomIngredientRecord::class,
-        RoomIngredientInBarProp::class
+        RoomIngredientInBarProp::class,
+        RoomFavoriteCocktail::class
     ],
-    version = 1
+    version = 3
 )
 abstract class Database : RoomDatabase() {
     abstract val ingredientsDao: IngredientsDao
     abstract val ingredientsInBarProp: IngredientInBarDao
-    /*
-    abstract val cocktailAlcoholicDao: CocktailAlcoholicDao
-    abstract val cocktailGlassDao: CocktailGlassDao
-    abstract val cocktailCategoryDao: CocktailCategoryDao
-    abstract val cocktailRecipeDao: CocktailRecipeDao
-    abstract val cocktailRecordDao: CocktailRecordDao
-    abstract val CocktailDao : CocktailDao
-     */
+    abstract val cocktailDao: CocktailDao
+    abstract val favoriteCocktail : FavoriteCocktailDao
+
     companion object {
         private const val DB_NAME = "database.db"
         private var instance: Database? = null

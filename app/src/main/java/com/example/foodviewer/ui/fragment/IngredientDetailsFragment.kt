@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
+import com.example.foodviewer.mvp.model.entity.cache.RoomCocktailsCache
 import com.example.foodviewer.mvp.model.entity.cache.RoomIngredientsCache
 import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
 import com.example.foodviewer.mvp.model.entity.room.db.Database
@@ -45,7 +46,7 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
         }
         IngredientDetailsPresenter(
             ingredientName,
-            RetrofitCocktailDetails(ApiHolder.api),
+            RetrofitCocktailDetails(ApiHolder.api, RoomCocktailsCache(Database.getInstance())),
             RetrofitIngredientDetails(ApiHolder.api, RoomIngredientsCache(Database.getInstance()), ApiHolder.apiTemplateHolder),
             App.instance.router,
             AndroidAppScreens(),

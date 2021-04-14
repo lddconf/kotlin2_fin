@@ -11,20 +11,14 @@ import androidx.room.PrimaryKey
             entity = RoomCocktailRecord::class,
             parentColumns = ["id"],
             childColumns = ["cocktailId"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = RoomIngredientRecord::class,
-            parentColumns = ["idIngredient"],
-            childColumns = ["ingredientId"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         )
     ],
-    indices = arrayOf(Index(value = ["ingredientId"]))
+    indices = arrayOf(Index(value = ["ingredientName"]))
 )
-class RoomCocktailRecipeRecord(
+data class RoomCocktailRecipeRecord(
     @PrimaryKey
     val cocktailId: Long,
-    val ingredientId: Long,
-    val recipe: String?
+    val ingredientName: String,
+    val recipe: String
 )

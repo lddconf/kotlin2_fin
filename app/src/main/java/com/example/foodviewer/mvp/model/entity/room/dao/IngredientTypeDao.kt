@@ -28,8 +28,8 @@ interface IngredientTypeDao {
     fun getAll() : List<RoomIngredientType>
 
     @Query("SELECT * FROM RoomIngredientType WHERE id = :idIngredientType LIMIT 1")
-    fun findITypeById(idIngredientType: Long) :  RoomIngredientType
+    fun findITypeById(idIngredientType: Long) :  RoomIngredientType?
 
     @Query("SELECT * FROM RoomIngredientType WHERE typeName = :ingredientType LIMIT 1")
-    fun findITypeByName(ingredientType: String) :  RoomIngredientType
+    fun findITypeByName(ingredientType: String) :  RoomIngredientType?
 }

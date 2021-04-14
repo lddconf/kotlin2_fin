@@ -9,26 +9,26 @@ import com.example.foodviewer.mvp.model.entity.room.RoomCocktailRecord
 @Dao
 interface CocktailGlassDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktailRecipe: RoomCocktailGlass)
+    fun insertCGlass(cocktailRecipe: RoomCocktailGlass)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cocktailRecipe: List<RoomCocktailGlass>)
+    fun insertCGlass(cocktailRecipe: List<RoomCocktailGlass>)
 
     @Update
-    fun update(cocktailRecipe: RoomCocktailGlass)
+    fun updateCGlass(cocktailRecipe: RoomCocktailGlass)
 
     @Update
-    fun update(cocktailRecipe: List<RoomCocktailGlass>)
+    fun updateCGlass(cocktailRecipe: List<RoomCocktailGlass>)
 
     @Delete
-    fun delete(cocktailRecipe: RoomCocktailGlass)
+    fun deleteCGlass(cocktailRecipe: RoomCocktailGlass)
 
     @Delete
-    fun delete(cocktailRecipe: List<RoomCocktailGlass>)
+    fun deleteCGlass(cocktailRecipe: List<RoomCocktailGlass>)
 
     @Query("SELECT * FROM RoomCocktailGlass WHERE id = :glassId LIMIT 1")
-    fun findById(glassId: Long) :  RoomCocktailGlass
+    fun findCGlassById(glassId: Long) :  RoomCocktailGlass?
 
     @Query("SELECT * FROM RoomCocktailGlass WHERE strGlass = :glassName LIMIT 1")
-    fun findByName(glassName: Long) : RoomCocktailGlass
+    fun findCGlassByName(glassName: String) : RoomCocktailGlass?
 }

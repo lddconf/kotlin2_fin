@@ -8,6 +8,4 @@ import kotlinx.parcelize.Parcelize
 data class IngredientAmount(
     val name: String,
     val amount : String,
-    @Expose(serialize = false, deserialize = false)
-    val exists : Boolean = false
 ) : Parcelable
