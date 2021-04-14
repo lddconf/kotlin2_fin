@@ -25,6 +25,9 @@ interface ICocktailDetailsView : MvpView {
     @Skip
     fun showCocktailRemovedFromFavoriteNotification()
 
+    @Skip
+    fun notifyIngredientInBarChanged(index: Int)
+
     fun initIngredients()
     fun updateIngredientList()
 }

@@ -3,11 +3,18 @@ package com.example.foodviewer.mvp.model.entity.bar
 import com.example.foodviewer.mvp.model.entity.room.RoomIngredientInBarProp
 import com.example.foodviewer.mvp.model.entity.room.db.Database
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.lang.RuntimeException
 
 class RoomBarProperties(val db: Database) : IBarProperties {
+    private val barChanged = PublishSubject.create<String>()
+
+    init {
+        barChanged.subscribeOn(Schedulers.io())
+    }
     override fun ingredientPresentById(ingredientId: Long): Single<Boolean> = Single.fromCallable {
         db.ingredientsInBarProp.findIInBarByIngredientId(ingredientId)?.let {
             it.amount > 0
@@ -19,9 +26,13 @@ class RoomBarProperties(val db: Database) : IBarProperties {
             db.ingredientsInBarProp.insertIInBarType(
                 RoomIngredientInBarProp(
                     ingredientId = ingredientId,
-                    amount = 1
+                    amount = if (exist) 1 else 0
                 )
             )
+            val ingredientRecord = db.ingredientsDao.findIRById(ingredientId)
+            ingredientRecord?.let {
+                barChanged.onNext(ingredientRecord.strIngredient)
+            }
         }.subscribeOn(Schedulers.io())
 
     override fun ingredientPresentByName(ingredientName: String): Single<Boolean> =
@@ -41,9 +52,10 @@ class RoomBarProperties(val db: Database) : IBarProperties {
                 db.ingredientsInBarProp.insertIInBarType(
                     RoomIngredientInBarProp(
                         ingredientId = it.idIngredient,
-                        amount = 1
+                        amount = if (exist) 1 else 0
                     )
                 )
+                barChanged.onNext(ingredientName)
             } ?: throw RuntimeException("No such ingredient in bar")
         }.subscribeOn(Schedulers.io())
 
@@ -63,4 +75,6 @@ class RoomBarProperties(val db: Database) : IBarProperties {
             }
             list.toList()
         }.subscribeOn(Schedulers.io())
+
+    override fun ingredientInBarChangedByName(): PublishSubject<String> = barChanged
 }

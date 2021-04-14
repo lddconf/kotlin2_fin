@@ -29,6 +29,6 @@ interface CocktailGlassDao {
     @Query("SELECT * FROM RoomCocktailGlass WHERE id = :glassId LIMIT 1")
     fun findCGlassById(glassId: Long) :  RoomCocktailGlass?
 
-    @Query("SELECT * FROM RoomCocktailGlass WHERE strGlass = :glassName LIMIT 1")
+    @Query("SELECT * FROM RoomCocktailGlass WHERE strGlass LIKE :glassName LIMIT 1")
     fun findCGlassByName(glassName: String) : RoomCocktailGlass?
 }

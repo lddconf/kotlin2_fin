@@ -31,6 +31,6 @@ interface IngredientRecordDao {
     @Query("SELECT * FROM RoomIngredientRecord WHERE idIngredient = :idIngredientRecordId LIMIT 1")
     fun findIRById(idIngredientRecordId: Long) :  RoomIngredientRecord?
 
-    @Query("SELECT * FROM RoomIngredientRecord WHERE strIngredient = :ingredientRecordName LIMIT 1")
+    @Query("SELECT * FROM RoomIngredientRecord WHERE strIngredient LIKE :ingredientRecordName LIMIT 1")
     fun findIRByName(ingredientRecordName: String) :  RoomIngredientRecord?
 }

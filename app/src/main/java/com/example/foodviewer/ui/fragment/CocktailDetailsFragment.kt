@@ -143,6 +143,10 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
         cocktailDetailsBinding?.cocktailIngredients?.adapter?.notifyDataSetChanged()
     }
 
+    override fun notifyIngredientInBarChanged(index: Int) {
+        cocktailDetailsBinding?.cocktailIngredients?.adapter?.notifyItemChanged(index)
+    }
+
     override fun displayError(description: String) {
         Toast.makeText(requireContext(), description, Toast.LENGTH_SHORT).show()
     }

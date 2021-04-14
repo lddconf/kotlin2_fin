@@ -18,26 +18,26 @@ import moxy.MvpPresenter
 
 
 class CocktailDetailsPresenter(
-        val cocktailId: Long?,
-        val api: ICocktailDetails,
-        val ingredientsApi: IIngredientDetails,
-        val barProperties: IBarProperties,
-        val favoriteCocktails: IFavoriteCocktails,
-        val router: Router,
-        val screens: IAppScreens,
-        val uiSchelduer: Scheduler
+    val cocktailId: Long?,
+    val api: ICocktailDetails,
+    val ingredientsApi: IIngredientDetails,
+    val barProperties: IBarProperties,
+    val favoriteCocktails: IFavoriteCocktails,
+    val router: Router,
+    val screens: IAppScreens,
+    val uiSchelduer: Scheduler
 ) : MvpPresenter<ICocktailDetailsView>() {
     private var recipeCollapsed = false
     private val compositeDisposable = CompositeDisposable()
 
 
     val ingredientAmountPresenter =
-            IngredientsAmountPresenter(ingredientsApi)
+        IngredientsAmountPresenter(ingredientsApi)
 
     class IngredientsAmountPresenter(
-            val ingredientsApi: IIngredientDetails
+        val ingredientsApi: IIngredientDetails
     ) :
-            IIngredientsAmountListPresenter {
+        IIngredientsAmountListPresenter {
 
         var ingredients = mutableListOf<Pair<IngredientAmount, Boolean>>()
 
@@ -71,6 +71,19 @@ class CocktailDetailsPresenter(
             val ingredient = ingredientAmountPresenter.ingredients[view.pos]
             router.navigateTo(screens.ingredientDetails(ingredient.first.name))
         }
+
+        val disposable =
+            barProperties.ingredientInBarChangedByName()
+                .observeOn(uiSchelduer)
+                .subscribe ({
+                    ingredientInBarChanged(it)
+                }, { error->
+            viewState.displayError("!!!!!")
+        }, {
+                    viewState.displayError("!!!!!")
+                })
+        compositeDisposable.add(disposable)
+
     }
 
     override fun onDestroy() {
@@ -86,20 +99,18 @@ class CocktailDetailsPresenter(
     fun favoriteChanged(state: Boolean) {
         cocktailId?.let {
             val disposable = favoriteCocktails.favoriteCocktailByIdSet(it, state)
-                    .observeOn(uiSchelduer)
-                    .subscribe({
-                        viewState.favoriteState(state)
-                        if (state) viewState.showCocktailAddedToFavoriteNotification() else viewState.showCocktailRemovedFromFavoriteNotification()
-                    },
-                            { error ->
-                                viewState.favoriteState(state.not()) //Roll back
-                                viewState.displayError(error.message ?: "Internal error")
-                            }
-                    )
+                .observeOn(uiSchelduer)
+                .subscribe({
+                    viewState.favoriteState(state)
+                    if (state) viewState.showCocktailAddedToFavoriteNotification() else viewState.showCocktailRemovedFromFavoriteNotification()
+                },
+                    { error ->
+                        viewState.favoriteState(state.not()) //Roll back
+                        viewState.displayError(error.message ?: "Internal error")
+                    }
+                )
             compositeDisposable.add(disposable)
         }
-
-
     }
 
     fun backClick(): Boolean {
@@ -107,54 +118,82 @@ class CocktailDetailsPresenter(
         return true
     }
 
+    private fun checkCocktailIngredientsInBar(cocktailDetails: CocktailDetails) {
+        val ingredientNames = cocktailDetails.ingredients.map { it.name }
+        barProperties.ingredientPresentByNames(ingredientNames).observeOn(uiSchelduer)
+            .subscribe({
+                displayCocktailIngredientsDetails(cocktailDetails.ingredients.zip(it))
+            },
+                { error ->
+                    displayCocktailIngredientsDetails(
+                        cocktailDetails.ingredients.zip(
+                            MutableList(cocktailDetails.ingredients.size) { false }
+                        ))
+                    viewState.displayError(
+                        error.localizedMessage
+                            ?: "Internal error occurred"
+                    )
+                })
+    }
+
     private fun loadCocktailDetails() {
         cocktailId?.apply {
             val disposable1 = api.cocktailById(cocktailId)
-                    .observeOn(uiSchelduer)
-                    .subscribe({ cocktailDetails ->
-                        val ingredientNames = cocktailDetails.ingredients.map { it.name }
-                        barProperties.ingredientPresentByNames(ingredientNames).observeOn(uiSchelduer)
-                                .subscribe({
-                                    displayCocktailDetails(cocktailDetails)
-                                    displayIngredientDetails(cocktailDetails.ingredients.zip(it))
-
-                                },
-                                        { error ->
-                                            displayCocktailDetails(
-                                                    cocktailDetails)
-                                            displayIngredientDetails(cocktailDetails.ingredients.zip(MutableList(cocktailDetails.ingredients.size) { false }))
-                                            viewState.displayError(
-                                                    error.localizedMessage
-                                                            ?: "Internal error occurred"
-                                            )
-                                        })
-                    },
-                            { error ->
-                                viewState.displayError(error.localizedMessage
-                                        ?: "Internal error occurred")
-                            })
-            val disposable2 = favoriteCocktails.favoriteCocktailById(cocktailId).observeOn(uiSchelduer).subscribe { result->
-                viewState.favoriteState(result) //Check from DB
-            }
-            compositeDisposable.addAll(disposable1,disposable2)
+                .observeOn(uiSchelduer)
+                .subscribe({ cocktailDetails ->
+                    displayCocktailDetails(cocktailDetails)
+                    checkCocktailIngredientsInBar(cocktailDetails)
+                },
+                    { error ->
+                        viewState.displayError(
+                            error.localizedMessage
+                                ?: "Internal error occurred"
+                        )
+                    })
+            val disposable2 =
+                favoriteCocktails.favoriteCocktailById(cocktailId).observeOn(uiSchelduer)
+                    .subscribe { result ->
+                        viewState.favoriteState(result) //Check from DB
+                    }
+            compositeDisposable.addAll(disposable1, disposable2)
         }
     }
 
     private fun displayCocktailDetails(
-            cocktailDetails: CocktailDetails
+        cocktailDetails: CocktailDetails
     ) = with(cocktailDetails) {
         viewState.cocktailName(strDrink ?: "")
         viewState.recipeText(strInstructions ?: "")
         viewState.loadCocktailThumb(strDrinkThumb ?: "")
     }
 
-
-    private fun displayIngredientDetails(
-            ingredientsPresent: List<Pair<IngredientAmount, Boolean>>
+    private fun displayCocktailIngredientsDetails(
+        ingredientsPresent: List<Pair<IngredientAmount, Boolean>>
     ) {
         ingredientAmountPresenter.ingredients.clear()
         ingredientAmountPresenter.ingredients.addAll(ingredientsPresent)
         viewState.updateIngredientList()
     }
 
+    private fun ingredientInBarChanged(ingredientName: String) {
+        ingredientAmountPresenter.ingredients.find {
+            ingredientName == it.first.name
+        }?.apply {
+            barProperties.ingredientPresentByName(ingredientName)
+                .observeOn(uiSchelduer)
+                .subscribe({
+                    viewState.notifyIngredientInBarChanged(
+                        ingredientAmountPresenter.ingredients.indexOf(
+                            this
+                        )
+                    )
+                },
+                    { error ->
+                        viewState.displayError(
+                            error.localizedMessage
+                                ?: "Internal error occurred"
+                        )
+                    })
+        }
+    }
 }

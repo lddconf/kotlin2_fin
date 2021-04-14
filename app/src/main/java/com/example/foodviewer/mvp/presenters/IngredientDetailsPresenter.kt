@@ -1,5 +1,6 @@
 package com.example.foodviewer.mvp.presenters
 
+import com.example.foodviewer.mvp.model.entity.bar.IBarProperties
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
 import com.example.foodviewer.mvp.model.requests.ICocktailDetails
@@ -19,6 +20,7 @@ class IngredientDetailsPresenter(
     val ingredientName: String?,
     val cocktailApi: ICocktailDetails,
     val ingredientsApi: IIngredientDetails,
+    val barProperties: IBarProperties,
     val router: Router,
     val screens: IAppScreens,
     val uiSchelduer: Scheduler
@@ -87,11 +89,19 @@ class IngredientDetailsPresenter(
         viewState.inBarState(state)
         //Some stuff code
         ingredientName?.let {
-            if (state) {
-                viewState.showIngredientAddedNotification(ingredientName)
-            } else {
-                viewState.showIngredientRemovedNotification(ingredientName)
-            }
+            val disposable = barProperties.setupIngredientByName(ingredientName, state)
+                .observeOn(uiSchelduer)
+                .subscribe({
+                    if (state) {
+                        viewState.showIngredientAddedNotification(ingredientName)
+                    } else {
+                        viewState.showIngredientRemovedNotification(ingredientName)
+                    }
+                }, { error ->
+                    viewState.inBarState(state.not()) //Roll back
+                    viewState.displayError(error.message ?: "Internal error")
+                })
+            compositeDisposable.addAll(disposable)
         }
     }
 
@@ -107,7 +117,7 @@ class IngredientDetailsPresenter(
 
     private fun loadIngredientDetails() {
         ingredientName?.apply {
-            val disposable = ingredientsApi.ingredientByName(ingredientName)
+            val disposable1 = ingredientsApi.ingredientByName(ingredientName)
                 .observeOn(uiSchelduer)
                 .subscribe({ ingredientDetails ->
                     displayIngredientDetails(ingredientDetails)
@@ -115,7 +125,12 @@ class IngredientDetailsPresenter(
                     { error ->
                         viewState.displayError(error.localizedMessage ?: "Internal error occurred")
                     })
-            compositeDisposable.add(disposable)
+            val disposable2 = barProperties.ingredientPresentByName(ingredientName)
+                .observeOn(uiSchelduer)
+                .subscribe { result ->
+                    viewState.inBarState(result)
+                }
+            compositeDisposable.addAll(disposable1, disposable2)
         }
     }
 
@@ -137,7 +152,6 @@ class IngredientDetailsPresenter(
     private fun displayIngredientDetails(ingredient: IngredientDetails) = with(ingredient) {
         viewState.ingredientName(ingredient.strIngredient)
         viewState.ingredientDescription(strDescription ?: "")
-        viewState.inBarState(false) //Check from DB
         //Form and load ingredient list
         viewState.loadIngredientThumb(ingredientsApi.ingredientMediumImageURLByName(ingredient.strIngredient))
     }

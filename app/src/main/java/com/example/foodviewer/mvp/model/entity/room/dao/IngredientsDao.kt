@@ -13,7 +13,11 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
         type = findITypeByName(ingredientType.typeName ?: "")
 
         if (type == null) {
-            insertIType(ingredient.ingredientType)
+            type = ingredient.ingredientType
+            if ( ingredient.ingredientType.typeName.isNullOrEmpty() ) {
+                type = ingredient.ingredientType.copy(typeName = "")
+            }
+            type.apply { insertIType(this) }
             type = findITypeByName(ingredientType.typeName ?: "")
         }
 

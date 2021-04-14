@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
 import com.example.foodviewer.mvp.model.api.ApiHolder
+import com.example.foodviewer.mvp.model.entity.bar.RoomBarProperties
 import com.example.foodviewer.mvp.model.entity.cache.RoomCocktailsCache
 import com.example.foodviewer.mvp.model.entity.cache.RoomIngredientsCache
 import com.example.foodviewer.mvp.model.entity.json.IngredientDetails
@@ -47,7 +48,12 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
         IngredientDetailsPresenter(
             ingredientName,
             RetrofitCocktailDetails(ApiHolder.api, RoomCocktailsCache(Database.getInstance())),
-            RetrofitIngredientDetails(ApiHolder.api, RoomIngredientsCache(Database.getInstance()), ApiHolder.apiTemplateHolder),
+            RetrofitIngredientDetails(
+                ApiHolder.api,
+                RoomIngredientsCache(Database.getInstance()),
+                ApiHolder.apiTemplateHolder
+            ),
+            RoomBarProperties(Database.getInstance()),
             App.instance.router,
             AndroidAppScreens(),
             AndroidSchedulers.mainThread()
@@ -127,7 +133,8 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
     }
 
     override fun initCocktailsWith() {
-        ingredientDetailsBinding?.cocktailsWithIngredient?.layoutManager = LinearLayoutManager(requireContext())
+        ingredientDetailsBinding?.cocktailsWithIngredient?.layoutManager =
+            LinearLayoutManager(requireContext())
         adapter = CocktailWithIngredientRVAdapter(presenter.cocktailWithPresenter, imageLoader)
         ingredientDetailsBinding?.cocktailsWithIngredient?.adapter = adapter
     }

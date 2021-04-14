@@ -4,6 +4,7 @@ import com.example.foodviewer.mvp.model.entity.room.db.Database
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 interface IBarProperties {
     fun ingredientPresentById(ingredientId: Long) : Single<Boolean>
@@ -12,7 +13,7 @@ interface IBarProperties {
     fun setupIngredientById(ingredientId: Long, exist : Boolean) : Completable
     fun setupIngredientByName(ingredientName: String, exist : Boolean) : Completable
 
-    //NotificationByIngedientId
-    //fun ingredientChangedNotification() : Observable<Long>
-    //fun ingredientChangedNotification() : Observable<String>
+    //Notification
+    fun ingredientInBarChangedByName() : PublishSubject<String>
+
 }
