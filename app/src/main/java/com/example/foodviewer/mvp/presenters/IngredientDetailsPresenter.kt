@@ -9,32 +9,49 @@ import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.mvp.presenters.list.ICocktailWithIngredientListPresenter
 import com.example.foodviewer.mvp.presenters.list.ICocktailsWithIngredientView
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
+import com.example.foodviewer.ui.App
 import com.example.foodviewer.ui.adapter.CocktailWithIngredientRVAdapter
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
+import javax.inject.Inject
+import javax.inject.Named
 
 
 class IngredientDetailsPresenter(
-    val ingredientName: String?,
-    val cocktailApi: ICocktailDetails,
-    val ingredientsApi: IIngredientDetails,
-    val barProperties: IBarProperties,
-    val router: Router,
-    val screens: IAppScreens,
-    val uiSchelduer: Scheduler
+    val ingredientName: String?
 ) : MvpPresenter<IIngredientDetailsView>() {
+    @Inject
+    lateinit var cocktailApi: ICocktailDetails
+    @Inject
+    lateinit var ingredientsApi: IIngredientDetails
+    @Inject
+    lateinit var barProperties: IBarProperties
+    @Inject
+    lateinit var router: Router
+    @Inject
+    lateinit var screens: IAppScreens
+
+    @Inject
+    @field:Named("UIThread")
+    lateinit var uiSchelduer: Scheduler
+
     private var descriptionCollapsed = false
     private val compositeDisposable = CompositeDisposable()
 
-    val cocktailWithPresenter = CocktailWithIngredientPresenter(cocktailApi, ingredientsApi)
+    val cocktailWithPresenter = CocktailWithIngredientPresenter().apply {
+        App.instance.appComponent.inject(this)
+    }
 
-    class CocktailWithIngredientPresenter(
-        val cocktailApi: ICocktailDetails,
-        ingredientsApi: IIngredientDetails
-    ) :
+    class CocktailWithIngredientPresenter() :
         ICocktailWithIngredientListPresenter {
+        @Inject
+        lateinit var cocktailApi: ICocktailDetails
+        @Inject
+        lateinit var ingredientsApi: IIngredientDetails
+
+
         var cocktailsBrief = mutableListOf<Cocktail>()
         override var itemClickListener: ((ICocktailsWithIngredientView) -> Unit)? = null
 

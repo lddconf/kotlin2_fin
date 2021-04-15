@@ -9,35 +9,41 @@ import com.example.foodviewer.mvp.view.IMainActivityView
 import com.example.foodviewer.ui.App
 import com.example.foodviewer.ui.listeners.OnBackClickListener
 import com.example.foodviewer.ui.navigation.AndroidAppScreens
+import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 class MainActivity : MvpAppCompatActivity(), IMainActivityView {
-
-    private val navigator = AppNavigator(this, R.id.container)
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
 
     private var vb: ActivityMainBinding? = null
+    private val navigator = AppNavigator(this, R.id.container)
 
     private val presenter by moxyPresenter {
-        MainPresenter(App.instance.router, AndroidAppScreens())
+        MainPresenter().apply {
+            App.instance.appComponent.inject(this)
+        }
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.instance.appComponent.inject(this)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb?.root)
     }
 
     override fun onPause() {
         super.onPause()
-        App.instance.navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.instance.navigatorHolder.setNavigator(navigator)
+        navigatorHolder.setNavigator(navigator)
     }
 
     override fun onBackPressed() {

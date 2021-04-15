@@ -46,18 +46,7 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
             ingredientName = it.getString(INGREDIENT_DETAILS_KEY)
         }
         IngredientDetailsPresenter(
-            ingredientName,
-            RetrofitCocktailDetails(ApiHolder.api, RoomCocktailsCache(Database.getInstance())),
-            RetrofitIngredientDetails(
-                ApiHolder.api,
-                RoomIngredientsCache(Database.getInstance()),
-                ApiHolder.apiTemplateHolder
-            ),
-            RoomBarProperties(Database.getInstance()),
-            App.instance.router,
-            AndroidAppScreens(),
-            AndroidSchedulers.mainThread()
-        )
+            ingredientName).apply { App.instance.appComponent.inject(this) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -10,6 +10,7 @@ import android.widget.ToggleButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
+import com.example.foodviewer.di.AppComponent
 import com.example.foodviewer.mvp.model.api.ApiHolder
 import com.example.foodviewer.mvp.model.entity.bar.RoomBarProperties
 import com.example.foodviewer.mvp.model.entity.bar.RoomFavoriteCocktails
@@ -44,20 +45,7 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
         arguments?.let {
             cocktailID = it.getLong(COCKTAIL_DETAILS_KEY)
         }
-        CocktailDetailsPresenter(
-                cocktailID,
-                RetrofitCocktailDetails(ApiHolder.api, RoomCocktailsCache(Database.getInstance())),
-                RetrofitIngredientDetails(
-                        ApiHolder.api,
-                        RoomIngredientsCache(Database.getInstance()),
-                        ApiHolder.apiTemplateHolder
-                ),
-                RoomBarProperties(Database.getInstance()),
-                RoomFavoriteCocktails(Database.getInstance()),
-                App.instance.router,
-                AndroidAppScreens(),
-                AndroidSchedulers.mainThread()
-        )
+        CocktailDetailsPresenter(cocktailID).apply { App.instance.appComponent.inject(this) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

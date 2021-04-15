@@ -9,12 +9,12 @@ import java.lang.RuntimeException
 @Dao
 abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
     fun insert(ingredient: RoomIngredient) = ingredient.apply {
-        var type : RoomIngredientType?
+        var type: RoomIngredientType?
         type = findITypeByName(ingredientType.typeName ?: "")
 
         if (type == null) {
             type = ingredient.ingredientType
-            if ( ingredient.ingredientType.typeName.isNullOrEmpty() ) {
+            if (ingredient.ingredientType.typeName.isNullOrEmpty()) {
                 type = ingredient.ingredientType.copy(typeName = "")
             }
             type.apply { insertIType(this) }
@@ -34,9 +34,12 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
     fun update(ingredient: RoomIngredient) {
         var ingredientType = findITypeByName(ingredient.ingredientType.typeName ?: "")
 
-        if ( ingredientType == null ) {
-            insertIType(ingredient.ingredientType)
-            findITypeByName(ingredient.ingredientType.typeName ?: "")
+        if (ingredientType == null) {
+            if (ingredient.ingredientType.typeName.isNullOrEmpty()) {
+                ingredientType = ingredient.ingredientType.copy(typeName = "")
+            }
+            ingredientType.apply { insertIType(ingredient.ingredientType) }
+            ingredientType = findITypeByName(ingredient.ingredientType.typeName ?: "")
         }
 
         ingredientType?.let {

@@ -14,6 +14,5 @@ interface IBarProperties {
     fun setupIngredientByName(ingredientName: String, exist : Boolean) : Completable
 
     //Notification
-    fun ingredientInBarChangedByName() : PublishSubject<String>
-
+    fun ingredientInBarChangedByName() : Observable<String>
 }

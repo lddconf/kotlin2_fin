@@ -1,9 +1,9 @@
 package com.example.foodviewer.ui
 
 import android.app.Application
-import com.example.foodviewer.mvp.model.entity.room.db.Database
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.Router
+import com.example.foodviewer.di.AppComponent
+import com.example.foodviewer.di.DaggerAppComponent
+import com.example.foodviewer.di.module.AppModule
 
 class App : Application() {
 
@@ -12,6 +12,9 @@ class App : Application() {
             private set
     }
 
+    lateinit var appComponent: AppComponent
+
+    /*
     private val cicerone: Cicerone<Router> by lazy {
         Cicerone.create()
     }
@@ -21,11 +24,15 @@ class App : Application() {
 
     val router
         get() = cicerone.router
-
+*/
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        Database.create(this)
+
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
+
     }
 }

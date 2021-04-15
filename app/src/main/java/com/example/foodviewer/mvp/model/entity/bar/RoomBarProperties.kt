@@ -10,11 +10,13 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import java.lang.RuntimeException
 
 class RoomBarProperties(val db: Database) : IBarProperties {
-    private val barChanged = PublishSubject.create<String>()
+    val barChanged = PublishSubject.create<String>()
 
     init {
         barChanged.subscribeOn(Schedulers.io())
     }
+
+
     override fun ingredientPresentById(ingredientId: Long): Single<Boolean> = Single.fromCallable {
         db.ingredientsInBarProp.findIInBarByIngredientId(ingredientId)?.let {
             it.amount > 0
@@ -22,59 +24,59 @@ class RoomBarProperties(val db: Database) : IBarProperties {
     }.subscribeOn(Schedulers.io())
 
     override fun setupIngredientById(ingredientId: Long, exist: Boolean): Completable =
-        Completable.fromCallable {
-            db.ingredientsInBarProp.insertIInBarType(
-                RoomIngredientInBarProp(
-                    ingredientId = ingredientId,
-                    amount = if (exist) 1 else 0
+            Completable.fromCallable {
+                db.ingredientsInBarProp.insertIInBarType(
+                        RoomIngredientInBarProp(
+                                ingredientId = ingredientId,
+                                amount = if (exist) 1 else 0
+                        )
                 )
-            )
-            val ingredientRecord = db.ingredientsDao.findIRById(ingredientId)
-            ingredientRecord?.let {
-                barChanged.onNext(ingredientRecord.strIngredient)
-            }
-        }.subscribeOn(Schedulers.io())
+                val ingredientRecord = db.ingredientsDao.findIRById(ingredientId)
+                ingredientRecord?.let {
+                    barChanged.onNext(ingredientRecord.strIngredient)
+                }
+            }.subscribeOn(Schedulers.io())
 
     override fun ingredientPresentByName(ingredientName: String): Single<Boolean> =
-        Single.fromCallable {
-            val ingredientRecord = db.ingredientsDao.findIRByName(ingredientName)
-            ingredientRecord?.let {
-                db.ingredientsInBarProp.findIInBarByIngredientId(it.idIngredient)?.let {
-                    it.amount > 0
+            Single.fromCallable {
+                val ingredientRecord = db.ingredientsDao.findIRByName(ingredientName)
+                ingredientRecord?.let {
+                    db.ingredientsInBarProp.findIInBarByIngredientId(it.idIngredient)?.let {
+                        it.amount > 0
+                    } ?: false
                 } ?: false
-            } ?: false
-        }.subscribeOn(Schedulers.io())
+            }.subscribeOn(Schedulers.io())
 
     override fun setupIngredientByName(ingredientName: String, exist: Boolean): Completable =
-        Completable.fromCallable {
-            val ingredientRecord = db.ingredientsDao.findIRByName(ingredientName)
-            ingredientRecord?.let {
-                db.ingredientsInBarProp.insertIInBarType(
-                    RoomIngredientInBarProp(
-                        ingredientId = it.idIngredient,
-                        amount = if (exist) 1 else 0
+            Completable.fromCallable {
+                val ingredientRecord = db.ingredientsDao.findIRByName(ingredientName)
+                ingredientRecord?.let {
+                    db.ingredientsInBarProp.insertIInBarType(
+                            RoomIngredientInBarProp(
+                                    ingredientId = it.idIngredient,
+                                    amount = if (exist) 1 else 0
+                            )
                     )
-                )
-                barChanged.onNext(ingredientName)
-            } ?: throw RuntimeException("No such ingredient in bar")
-        }.subscribeOn(Schedulers.io())
+                    barChanged.onNext(ingredientName)
+                } ?: throw RuntimeException("No such ingredient in bar")
+            }.subscribeOn(Schedulers.io())
 
 
     override fun ingredientPresentByNames(ingredientNames: List<String>): Single<List<Boolean>> =
-        Single.fromCallable {
-            val list = mutableListOf<Boolean>()
-            for (ingredientName in ingredientNames) {
-                val ingredientRecord = db.ingredientsDao.findIRByName(ingredientName)
-                list.add(
-                    ingredientRecord?.let {
-                        db.ingredientsInBarProp.findIInBarByIngredientId(it.idIngredient)?.let {
-                            it.amount > 0
-                        } ?: false
-                    } ?: false
-                )
-            }
-            list.toList()
-        }.subscribeOn(Schedulers.io())
+            Single.fromCallable {
+                val list = mutableListOf<Boolean>()
+                for (ingredientName in ingredientNames) {
+                    val ingredientRecord = db.ingredientsDao.findIRByName(ingredientName)
+                    list.add(
+                            ingredientRecord?.let {
+                                db.ingredientsInBarProp.findIInBarByIngredientId(it.idIngredient)?.let { ingrProp ->
+                                    ingrProp.amount > 0
+                                } ?: false
+                            } ?: false
+                    )
+                }
+                list.toList()
+            }.subscribeOn(Schedulers.io())
 
-    override fun ingredientInBarChangedByName(): PublishSubject<String> = barChanged
+    override fun ingredientInBarChangedByName(): Observable<String> = barChanged.subscribeOn(Schedulers.io())
 }
