@@ -81,6 +81,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cocktail_ingredients"
+                android:overScrollMode="never"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

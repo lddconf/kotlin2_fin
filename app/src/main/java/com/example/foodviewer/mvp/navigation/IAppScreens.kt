@@ -6,4 +6,6 @@ import com.github.terrakok.cicerone.Screen
 interface IAppScreens {
     fun cocktailDetails(cocktailID: Long?): Screen
     fun ingredientDetails(ingredientName: String?): Screen
+
+    //fun splashWindow()
 }

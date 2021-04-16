@@ -1,5 +1,7 @@
 package com.example.foodviewer.ui.activity
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.foodviewer.R
@@ -19,6 +21,10 @@ class MainActivity : MvpAppCompatActivity(), IMainActivityView {
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
+    companion object {
+        fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
+    }
+
     private var vb: ActivityMainBinding? = null
     private val navigator = AppNavigator(this, R.id.container)
 
@@ -27,7 +33,6 @@ class MainActivity : MvpAppCompatActivity(), IMainActivityView {
             App.instance.appComponent.inject(this)
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

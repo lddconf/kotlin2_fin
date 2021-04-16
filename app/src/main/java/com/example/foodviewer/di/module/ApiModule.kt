@@ -1,6 +1,5 @@
 package com.example.foodviewer.di.module
 
-import com.example.foodviewer.mvp.model.api.ApiHolder
 import com.example.foodviewer.mvp.model.api.IDataSource
 import com.example.foodviewer.mvp.model.api.IIngredientImageUrlSource
 import com.google.gson.Gson
