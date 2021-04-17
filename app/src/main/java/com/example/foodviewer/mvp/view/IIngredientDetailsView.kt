@@ -1,6 +1,7 @@
 package com.example.foodviewer.mvp.view
 
 import com.example.foodviewer.mvp.model.entity.IngredientAmount
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip
@@ -25,7 +26,7 @@ interface IIngredientDetailsView : MvpView {
 
     fun loadIngredientThumb(url: String)
 
+    @Skip
+    fun updateCocktailsWithList(cocktails : List<Cocktail>)
 
-    fun initCocktailsWith()
-    fun updateCocktailsWithList()
 }

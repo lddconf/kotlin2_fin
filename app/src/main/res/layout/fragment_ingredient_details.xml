@@ -79,11 +79,11 @@
                 android:textAlignment="viewStart"
                 android:textSize="15sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/cocktails_with_ingredient"
-                android:overScrollMode="never"
+            <FrameLayout
+                android:id="@+id/cocktails_with_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </RelativeLayout>

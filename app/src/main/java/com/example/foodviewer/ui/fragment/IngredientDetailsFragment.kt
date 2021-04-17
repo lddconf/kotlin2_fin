@@ -10,12 +10,14 @@ import android.widget.ToggleButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.presenters.IngredientDetailsPresenter
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
 import com.example.foodviewer.ui.App
 import com.example.foodviewer.ui.adapter.CocktailWithIngredientRVAdapter
 import com.example.foodviewer.ui.image.GlideImageLoader
 import com.example.foodviewer.ui.listeners.OnBackClickListener
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
@@ -109,16 +111,20 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
             imageLoader.load(url, ingredientThumb)
         }
     }
-
+/*
     override fun initCocktailsWith() {
+
         ingredientDetailsBinding?.cocktailsWithIngredient?.layoutManager =
             LinearLayoutManager(requireContext())
         adapter = CocktailWithIngredientRVAdapter(presenter.cocktailWithPresenter, imageLoader)
         ingredientDetailsBinding?.cocktailsWithIngredient?.adapter = adapter
-    }
 
-    override fun updateCocktailsWithList() {
-        ingredientDetailsBinding?.cocktailsWithIngredient?.adapter?.notifyDataSetChanged()
+    }
+*/
+    override fun updateCocktailsWithList(cocktails: List<Cocktail>) {
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.replace(R.id.cocktails_with_container, CocktailsListWithIngredientsFragment.newInstance(cocktails))
+        transaction.commit()
     }
 
     override fun displayError(description: String) {
