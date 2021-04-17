@@ -7,6 +7,11 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 interface IBarProperties {
+    data class IngredientInBar(
+            val name: String,
+            var present: Boolean
+    )
+
     fun ingredientPresentById(ingredientId: Long) : Single<Boolean>
     fun ingredientPresentByName(ingredientName: String) : Single<Boolean>
     fun ingredientPresentByNames(ingredientNames: List<String>) : Single<List<Boolean>>
@@ -14,5 +19,5 @@ interface IBarProperties {
     fun setupIngredientByName(ingredientName: String, exist : Boolean) : Completable
 
     //Notification
-    fun ingredientInBarChangedByName() : Observable<String>
+    fun ingredientInBarChangedByName() : Observable<IngredientInBar>
 }

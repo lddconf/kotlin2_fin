@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import java.lang.RuntimeException
 
 class RoomBarProperties(val db: Database) : IBarProperties {
-    val barChanged = PublishSubject.create<String>()
+    val barChanged = PublishSubject.create<IBarProperties.IngredientInBar>()
 
     init {
         barChanged.subscribeOn(Schedulers.io())
@@ -33,7 +33,7 @@ class RoomBarProperties(val db: Database) : IBarProperties {
                 )
                 val ingredientRecord = db.ingredientsDao.findIRById(ingredientId)
                 ingredientRecord?.let {
-                    barChanged.onNext(ingredientRecord.strIngredient)
+                    barChanged.onNext(IBarProperties.IngredientInBar(ingredientRecord.strIngredient, exist))
                 }
             }.subscribeOn(Schedulers.io())
 
@@ -57,7 +57,7 @@ class RoomBarProperties(val db: Database) : IBarProperties {
                                     amount = if (exist) 1 else 0
                             )
                     )
-                    barChanged.onNext(ingredientName)
+                    barChanged.onNext(IBarProperties.IngredientInBar(ingredientName, exist))
                 } ?: throw RuntimeException("No such ingredient in bar")
             }.subscribeOn(Schedulers.io())
 
@@ -78,5 +78,5 @@ class RoomBarProperties(val db: Database) : IBarProperties {
                 list.toList()
             }.subscribeOn(Schedulers.io())
 
-    override fun ingredientInBarChangedByName(): Observable<String> = barChanged.subscribeOn(Schedulers.io())
+    override fun ingredientInBarChangedByName(): Observable<IBarProperties.IngredientInBar> = barChanged.subscribeOn(Schedulers.io())
 }

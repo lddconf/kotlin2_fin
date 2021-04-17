@@ -1,6 +1,5 @@
 package com.example.foodviewer.mvp.presenters
 
-import android.graphics.Paint
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
 import com.example.foodviewer.mvp.model.entity.IngredientAmount
 import com.example.foodviewer.mvp.model.entity.bar.IBarProperties
@@ -28,20 +27,25 @@ class CocktailDetailsPresenter(
 
     @Inject
     lateinit var api: ICocktailDetails
+
     @Inject
     lateinit var ingredientsApi: IIngredientDetails
+
     @Inject
     lateinit var barProperties: IBarProperties
+
     @Inject
     lateinit var favoriteCocktails: IFavoriteCocktails
+
     @Inject
     lateinit var router: Router
+
     @Inject
     lateinit var screens: IAppScreens
+
     @Inject
     @field:Named("UIThread")
     lateinit var uiSchelduer: Scheduler
-
 
 
     private var recipeCollapsed = false
@@ -187,24 +191,13 @@ class CocktailDetailsPresenter(
         viewState.updateIngredientList()
     }
 
-    private fun ingredientInBarChanged(ingredientName: String) {
-        val res = ingredientAmountPresenter.ingredients.find {
-            ingredientName == it.first.name
-        }?.apply {
-            barProperties.ingredientPresentByName(ingredientName)
-                    .observeOn(uiSchelduer)
-                    .subscribe({ state ->
-                        val index = ingredientAmountPresenter.ingredients.indexOf(this)
-                        val element = ingredientAmountPresenter.ingredients[index]
-                        ingredientAmountPresenter.ingredients[index] = element.copy(second = state)
-                        viewState.notifyIngredientInBarChanged(index)
-                    },
-                            { error ->
-                                viewState.displayError(
-                                        error.localizedMessage
-                                                ?: "Internal error occurred"
-                                )
-                            })
+    private fun ingredientInBarChanged(ingredientChanged: IBarProperties.IngredientInBar) {
+        ingredientAmountPresenter.ingredients.forEachIndexed { index, pair ->
+            if (pair.first.name == ingredientChanged.name) {
+                ingredientAmountPresenter.ingredients[index] = ingredientAmountPresenter.ingredients[index].copy(second = ingredientChanged.present)
+                viewState.updateIngredientList()
+                return
+            }
         }
     }
 }
