@@ -15,7 +15,7 @@
     <string name="ingredient_description">Ingredient description</string>
     <string name="ingredient_added_to_bar">Added to bar:</string>
     <string name="ingredient_removed_from__bar">Removed from bar:</string>
-    <string name="require_ingredients">Not enough:</string>
+    <string name="require_ingredients">Required:</string>
     <string name="ingredients">ingredients</string>
     <string name="ingredient">ingredient</string>
     <string name="cocktail_added_to_favorites">Added to favorites</string>

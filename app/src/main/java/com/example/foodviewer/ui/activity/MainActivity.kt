@@ -54,7 +54,10 @@ class MainActivity : MvpAppCompatActivity(), IMainActivityView {
     override fun onBackPressed() {
         supportFragmentManager.fragments.forEach {
             if (it is OnBackClickListener && it.onBackClicked()) {
-                return
+                val fragmentsCount = supportFragmentManager.fragments.size
+                if ( fragmentsCount <= 1) {
+                    return@forEach
+                } else return
             }
         }
         presenter.backClicked()

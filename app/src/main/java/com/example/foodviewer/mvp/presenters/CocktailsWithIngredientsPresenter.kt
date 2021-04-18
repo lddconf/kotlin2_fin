@@ -122,6 +122,8 @@ class CocktailsWithIngredientsPresenter(
         lateinit var request: Observable<CocktailDetails>
         var cocktailsWithIngredient = mutableListOf<CocktailWithIngredientsInBar>()
 
+        if (cocktails.isEmpty()) return
+
         cocktails.forEachIndexed { index, cocktail ->
             if (index == 0) {
                 request = cocktailApi.cocktailById(cocktail.idDrink).toObservable()

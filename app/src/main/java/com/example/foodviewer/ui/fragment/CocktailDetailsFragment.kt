@@ -19,15 +19,16 @@ import com.example.foodviewer.ui.listeners.OnBackClickListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
+import javax.inject.Inject
 
 class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
         OnBackClickListener {
     private var cocktailDetailsBinding: FragmentCoctailDetailsBinding? = null
     private var adapter: IngredientsAmountRVAdapter? = null
 
-    private val imageLoader: IImageLoader<ImageView> by lazy {
-        GlideImageLoader(true)
-    }
+    @Inject
+    lateinit var imageLoader: IImageLoader<ImageView>
+
 
     private val presenter by moxyPresenter {
         var cocktailID: Long? = null
@@ -39,6 +40,7 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.instance.appComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -50,6 +52,9 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
         cocktailDetailsBinding?.cocktailRecipe?.setOnClickListener {
             presenter.recipeViewClicked()
         }
@@ -58,7 +63,6 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
             it as ToggleButton
             presenter.favoriteChanged(it.isChecked)
         }
-
     }
 
     override fun onDestroyView() {

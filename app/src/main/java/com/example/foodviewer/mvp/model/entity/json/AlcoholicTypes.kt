@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AlcoholicTypes(
     @SerializedName("drinks")
-    val ingredients : List<AlcoholicType>
+    val types : List<AlcoholicType>
 ) : Parcelable

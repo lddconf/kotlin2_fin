@@ -29,10 +29,14 @@ class RoomFavoriteCocktails(val db: Database) : IFavoriteCocktails {
                 ))
             }.subscribeOn(Schedulers.io())
 
-    override fun favoriteCocktailByNameSet(cocktailName: String, favorite: Boolean): Completable {
+    override fun favoriteCocktailByNameSet(cocktailName: String, favorite: Boolean): Completable = Completable.fromCallable {
         val cocktailRecord = db.cocktailDao.findCRecordByName(cocktailName)
-        return cocktailRecord?.let {
+        cocktailRecord?.let {
             favoriteCocktailByIdSet(cocktailRecord.id, favorite)
         } ?: Completable.error(RuntimeException("No such cocktail"))
-    }
+    }.subscribeOn(Schedulers.io())
+
+    override fun allFavoriteCocktailIDs(): Single<List<Long>> = Single.fromCallable {
+        db.favoriteCocktail.getAllFC().filter { it.favorite }.map { it.cocktailId }
+    }.subscribeOn(Schedulers.io())
 }

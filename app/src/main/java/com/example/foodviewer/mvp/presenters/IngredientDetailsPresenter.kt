@@ -62,7 +62,6 @@ class IngredientDetailsPresenter(
     fun ingredientDescriptionViewClicked() {
         descriptionCollapsed = descriptionCollapsed.not()
         viewState.collapseIngredientDescription(descriptionCollapsed)
-
     }
 
     fun inBarState(state: Boolean) {

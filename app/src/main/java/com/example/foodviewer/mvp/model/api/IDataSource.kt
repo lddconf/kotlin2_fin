@@ -27,7 +27,7 @@ interface IDataSource {
     @GET("filter.php")
     fun searchCocktailByIngredient(@Query("i") name: String): Single<Cocktails>
 
-    @GET("filter.php?a=Alcoholic")
+    @GET("filter.php")
     fun filterByAlcoholicType(@Query("a") type: String): Single<Cocktails>
 
     @GET("filter.php")

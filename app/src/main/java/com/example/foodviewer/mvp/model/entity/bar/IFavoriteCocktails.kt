@@ -10,4 +10,5 @@ interface IFavoriteCocktails {
     fun favoriteCocktailByName(cocktailName: String) : Single<Boolean>
     fun favoriteCocktailByIdSet(cocktailId: Long, favorite: Boolean) : Completable
     fun favoriteCocktailByNameSet(cocktailName: String, favorite: Boolean) : Completable
+    fun allFavoriteCocktailIDs() : Single<List<Long>>
 }
