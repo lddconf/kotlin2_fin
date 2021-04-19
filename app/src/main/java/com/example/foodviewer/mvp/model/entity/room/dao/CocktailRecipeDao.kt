@@ -23,6 +23,6 @@ interface CocktailRecipeDao {
     @Delete
     fun deleteCRecipe(cocktailRecipe: List<RoomCocktailRecipeRecord>)
 
-    @Query("SELECT * FROM RoomCocktailRecipeRecord WHERE cocktailId = :cocktailId LIMIT 1")
+    @Query("SELECT * FROM RoomCocktailRecipeRecord WHERE cocktailId = :cocktailId")
     fun findCRecipeByCocktailId(cocktailId: Long) :  List<RoomCocktailRecipeRecord>
 }

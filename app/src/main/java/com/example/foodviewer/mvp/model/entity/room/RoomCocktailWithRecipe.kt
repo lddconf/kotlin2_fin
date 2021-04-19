@@ -53,6 +53,7 @@ fun CocktailDetails.toRoomCocktailWithRecipe(): RoomCocktailWithRecipe = RoomCoc
         ),
         recipe = ingredients.map {
                 RoomCocktailRecipeRecord(
+                        id = 0,
                         cocktailId = id,
                         ingredientName = it.name,
                         recipe = it.amount

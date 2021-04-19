@@ -19,7 +19,7 @@ import java.lang.IllegalStateException
         RoomIngredientInBarProp::class,
         RoomFavoriteCocktail::class
     ],
-    version = 5
+    version = 10
 )
 abstract class Database : RoomDatabase() {
     abstract val ingredientsDao: IngredientsDao

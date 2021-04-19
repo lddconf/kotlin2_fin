@@ -12,11 +12,6 @@ import java.lang.RuntimeException
 class RoomBarProperties(val db: Database) : IBarProperties {
     val barChanged = PublishSubject.create<IBarProperties.IngredientInBar>()
 
-    init {
-        barChanged.subscribeOn(Schedulers.io())
-    }
-
-
     override fun ingredientPresentById(ingredientId: Long): Single<Boolean> = Single.fromCallable {
         db.ingredientsInBarProp.findIInBarByIngredientId(ingredientId)?.let {
             it.amount > 0

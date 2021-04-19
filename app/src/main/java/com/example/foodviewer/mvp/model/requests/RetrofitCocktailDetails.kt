@@ -7,6 +7,7 @@ import com.example.foodviewer.mvp.model.entity.json.AlcoholicType
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.model.entity.toCocktailDetails
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.functions.BiConsumer
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -127,5 +128,5 @@ class RetrofitCocktailDetails(
                 request.collectInto(mutableListOf<Cocktail>(), BiConsumer { l, i -> l.addAll(i) })
             }
         }.map { result -> result.distinctBy { it.idDrink }.toList() }
-            .subscribeOn(Schedulers.newThread())
+            .subscribeOn(Schedulers.io())
 }

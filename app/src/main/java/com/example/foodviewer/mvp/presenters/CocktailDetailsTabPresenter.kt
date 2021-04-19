@@ -43,39 +43,19 @@ class CocktailDetailsTabPresenter() : MvpPresenter<ICocktailsDetailsTabView>() {
     }
 
     class CocktailsTabViewProvider(val cocktailTabGroup: ICocktailsTabGroup) : ITabFramesProvider {
-        enum class TABS(val id: Int) {
+        private enum class TABS(val id: Int) {
             MY_COCKTAILS(2),
             ALL_COCKTAILS(0),
             FAVORITE_COCKTAILS(1)
         }
 
-        var favoriteCocktails: List<Cocktail> = listOf()
-            set(cocktails: List<Cocktail>) {
-                field = cocktails
-                fragmentHolders[TABS.FAVORITE_COCKTAILS.id].getInstance()?.let {
-                    if (it is ICocktailListChangeable) it.cocktailList(cocktails)
-                }
-            }
-
-        var allCocktails: List<Cocktail> = listOf()
-            set(cocktails: List<Cocktail>) {
-                field = cocktails
-                fragmentHolders[TABS.ALL_COCKTAILS.id].getInstance()?.let {
-                    if (it is ICocktailListChangeable) it.cocktailList(cocktails)
-                }
-            }
-
-        var myCocktails: List<Cocktail> = listOf()
-            set(cocktails: List<Cocktail>) {
-                field = cocktails
-                fragmentHolders[TABS.MY_COCKTAILS.id].getInstance()?.let {
-                    if (it is ICocktailListChangeable) it.cocktailList(cocktails)
-                }
-            }
+        private val favoriteCocktails: MutableList<Cocktail> = mutableListOf()
+        private val allCocktails: MutableList<Cocktail> = mutableListOf()
+        private val myCocktails: MutableList<Cocktail> = mutableListOf()
 
         private val fragmentHolders = arrayListOf<TabFragmentHolder>(
-                cocktailTabGroup.allCocktails(allCocktails),
-                cocktailTabGroup.favoriteCocktails(favoriteCocktails)
+            cocktailTabGroup.allCocktails(allCocktails),
+            cocktailTabGroup.favoriteCocktails(favoriteCocktails)
         )
 
         override fun fragmentFactory(position: Int) = when (position) {
@@ -91,20 +71,72 @@ class CocktailDetailsTabPresenter() : MvpPresenter<ICocktailsDetailsTabView>() {
             else -> null
         }
 
-        override fun itemCount(): Int {
-            return 2
+        override fun itemCount() = fragmentHolders.size
+
+        private fun updateFavoriteList() {
+            fragmentHolders[TABS.FAVORITE_COCKTAILS.id].getInstance()?.let {
+                it as ICocktailListChangeable
+                it.cocktailList(favoriteCocktails)
+            }
         }
+
+        fun setFavoriteList(cocktailIds: List<Long>) {
+            favoriteCocktails.clear()
+            favoriteCocktails.addAll(allCocktails.filter { cocktailIds.contains(it.idDrink) })
+            updateFavoriteList()
+        }
+
+        fun updateFavoriteList(id: Long, favorite: Boolean) {
+            if (favorite) {
+                if (favoriteCocktails.find { it.idDrink == id } == null) {
+                    val cocktail = allCocktails.find { it.idDrink == id }
+                    cocktail?.let {
+                        favoriteCocktails.add(cocktail)
+                        updateFavoriteList()
+                    }
+                }
+            } else {
+                favoriteCocktails.find { it.idDrink == id }?.let {
+                    favoriteCocktails.remove(it)
+                    updateFavoriteList()
+                }
+            }
+        }
+
+        fun setAllCocktailsList(cocktails: List<Cocktail>) {
+            allCocktails.clear()
+            allCocktails.addAll(cocktails)
+            fragmentHolders[TABS.ALL_COCKTAILS.id].getInstance()?.let {
+                it as ICocktailListChangeable
+                it.cocktailList(allCocktails)
+            }
+        }
+
+        fun setMyCocktailsList(cocktails: List<Cocktail>) {
+            myCocktails.clear()
+            myCocktails.addAll(cocktails)
+            fragmentHolders[TABS.ALL_COCKTAILS.id].getInstance()?.let {
+                it as ICocktailListChangeable
+                it.cocktailList(myCocktails)
+            }
+        }
+
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.initTabs()
         loadAllCocktailsList()
+        val subscribe = favoriteCocktails.favoriteCocktailChangedById().observeOn(uiSchelduer)
+            .subscribe { favoriteState ->
+                tabsViewPresenter.updateFavoriteList(favoriteState.id, favoriteState.favorite)
+            }
+        compositeDisposable.add(subscribe)
     }
 
     fun backClick(): Boolean {
         router.exit()
-        return true
+        return false
     }
 
     override fun onDestroy() {
@@ -112,22 +144,22 @@ class CocktailDetailsTabPresenter() : MvpPresenter<ICocktailsDetailsTabView>() {
         compositeDisposable.dispose()
     }
 
-    fun formFavoriteCocktails(cocktails: List<Cocktail>) {
+    private fun formFavoriteCocktails() {
         favoriteCocktails.allFavoriteCocktailIDs().observeOn(uiSchelduer).subscribe { ids ->
-            tabsViewPresenter.favoriteCocktails = cocktails.filter { ids.contains(it.idDrink) }
+            tabsViewPresenter.setFavoriteList(ids)
         }
     }
 
     private fun loadAllCocktailsList() {
-        cocktailApi.getAllCocktails().observeOn(uiSchelduer).subscribe(
-                { allCocktails ->
-                    //Handle cocktails
-                    tabsViewPresenter.allCocktails = allCocktails.sortedBy { it.strDrink }
-                    formFavoriteCocktails(tabsViewPresenter.allCocktails)
-                }, { error ->
-            viewState.displayError(error.message ?: "Internal error")
-        })
+        val subscribe = cocktailApi.getAllCocktails().observeOn(uiSchelduer).subscribe(
+            { allCocktails ->
+                //Handle cocktails
+                //val sotedAllCocktails = allCocktails.sortedBy { it.strDrink }
+                tabsViewPresenter.setAllCocktailsList(allCocktails)
+                formFavoriteCocktails()
+            }, { error ->
+                viewState.displayError(error.message ?: "Internal error")
+            })
+        compositeDisposable.add(subscribe)
     }
-
-
 }

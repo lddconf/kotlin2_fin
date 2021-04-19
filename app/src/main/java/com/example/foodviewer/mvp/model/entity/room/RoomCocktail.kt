@@ -12,12 +12,12 @@ data class RoomCocktail(
     @Relation(parentColumn = "strAlcoholicId", entityColumn = "id")
     val alcoholic: RoomCocktailAlcoholic,
 
-    @Relation(parentColumn = "strAlcoholicId", entityColumn = "id")
+    @Relation(parentColumn = "strGlassId", entityColumn = "id")
     val glass: RoomCocktailGlass,
 
     @Relation(parentColumn = "strCategoryId", entityColumn = "id")
     val category: RoomCocktailCategory,
 
-    @Relation(parentColumn = "strInstructions", entityColumn = "cocktailId")
+    @Relation(parentColumn = "id", entityColumn = "cocktailId")
     val recipe : List<RoomCocktailRecipeRecord>
 )

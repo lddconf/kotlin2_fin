@@ -14,10 +14,11 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
         )
     ],
-    indices = arrayOf(Index(value = ["ingredientName"]))
+    indices = arrayOf(Index(value = ["cocktailId"]), Index(value = ["ingredientName"]))
 )
 data class RoomCocktailRecipeRecord(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id : Long,
     val cocktailId: Long,
     val ingredientName: String,
     val recipe: String

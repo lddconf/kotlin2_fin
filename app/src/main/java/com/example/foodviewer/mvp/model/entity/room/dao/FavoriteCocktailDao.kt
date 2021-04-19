@@ -23,12 +23,12 @@ interface FavoriteCocktailDao {
     @Delete
     fun deleteFC(type: RoomFavoriteCocktail)
 
-    @Delete
-    fun deleteFC(type: List<RoomFavoriteCocktail>)
+    @Query("DELETE FROM RoomFavoriteCocktail WHERE cocktailId = :id")
+    fun deleteFC(id : Long)
 
     @Query("SELECT * from RoomFavoriteCocktail")
     fun getAllFC() : List<RoomFavoriteCocktail>
 
-    @Query("SELECT * FROM RoomFavoriteCocktail WHERE cocktailId = :cocktailId LIMIT 1")
-    fun findIFCByCocktailId(cocktailId: Long) :  RoomFavoriteCocktail?
+    @Query("SELECT * FROM RoomFavoriteCocktail WHERE cocktailId = :id LIMIT 1")
+    fun findIFCByCocktailId(id: Long) :  RoomFavoriteCocktail?
 }

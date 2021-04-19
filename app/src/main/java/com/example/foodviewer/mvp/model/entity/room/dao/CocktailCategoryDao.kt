@@ -26,6 +26,6 @@ interface CocktailCategoryDao {
     @Query("SELECT * FROM RoomCocktailCategory WHERE id = :categoryId LIMIT 1")
     fun findCCategoryById(categoryId: Long) :  RoomCocktailCategory?
 
-    @Query("SELECT * FROM RoomCocktailCategory WHERE strCategory LIKE :categoryName LIMIT 1")
+    @Query("SELECT * FROM RoomCocktailCategory WHERE UPPER(strCategory) LIKE UPPER(:categoryName) LIMIT 1")
     fun findCCategoryByName(categoryName: String) : RoomCocktailCategory?
 }

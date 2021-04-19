@@ -24,26 +24,31 @@ abstract class CocktailDao : CocktailAlcoholicDao, CocktailCategoryDao, Cocktail
             categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
         }
 
-        val existingRecipes = findCRecipeByCocktailId(cocktailWithRecipe.cocktail.id)
-        if ( existingRecipes.zip(cocktailWithRecipe.recipe).all { (old, new) ->
-            old.ingredientName == new.ingredientName && old.recipe == new.recipe
-        }.not() ) { //Delete old recipes. Save new.
-            deleteCRecipe(existingRecipes)
-            insertCRecipe(cocktailWithRecipe.recipe)
-        }
-
         val cWithRecipe = cocktailWithRecipe.cocktail.copy(
-                strAlcoholicId = alcoholicP?.id,
-                strGlassId = glassP?.id,
-                strCategoryId = categoryP?.id
+            strAlcoholicId = alcoholicP?.id,
+            strGlassId = glassP?.id,
+            strCategoryId = categoryP?.id
         )
         insertCRecord(cWithRecipe)
+
+        val existingRecipes = findCRecipeByCocktailId(cocktailWithRecipe.cocktail.id)
+
+        if ( existingRecipes.size > 0 ) {
+            if ( existingRecipes.zip(cocktailWithRecipe.recipe).any { (old, new) ->
+                    (old.ingredientName != new.ingredientName) || (old.recipe != new.recipe)
+                }) { //Delete old recipes. Save new.
+                deleteCRecipe(existingRecipes)
+                insertCRecipe(cocktailWithRecipe.recipe)
+            }
+        } else {
+            insertCRecipe(cocktailWithRecipe.recipe)
+        }
     }
 
     fun insertCocktail(cocktailsWithRecipe: List<RoomCocktailWithRecipe>) = cocktailsWithRecipe.forEach {
         insertCocktail(it)
     }
-
+/*
     fun update(cocktailWithRecipe: RoomCocktailWithRecipe) {
         var alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
         var glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
@@ -77,7 +82,7 @@ abstract class CocktailDao : CocktailAlcoholicDao, CocktailCategoryDao, Cocktail
         )
         updateCRecord(cWithRecipe)
     }
-
+*/
     fun delete(cocktail: RoomCocktailWithRecipe) = deleteCRecord(cocktail.cocktail)
 
     fun delete(cocktails: List<RoomCocktailWithRecipe>) = deleteCRecord(cocktails.map { it.cocktail })

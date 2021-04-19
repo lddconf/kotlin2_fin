@@ -28,6 +28,6 @@ interface CocktailAlcoholicDao {
     @Query("SELECT * FROM RoomCocktailAlcoholic WHERE id = :alcoholicId LIMIT 1")
     fun findCAlcoholicById(alcoholicId: Long) :  RoomCocktailAlcoholic?
 
-    @Query("SELECT * FROM RoomCocktailAlcoholic WHERE strAlcoholic LIKE :alcoholicName LIMIT 1")
+    @Query("SELECT * FROM RoomCocktailAlcoholic WHERE UPPER(strAlcoholic) LIKE UPPER(:alcoholicName) LIMIT 1")
     fun findCAlcoholicByName(alcoholicName: String) :  RoomCocktailAlcoholic?
 }
