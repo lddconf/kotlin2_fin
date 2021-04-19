@@ -9,6 +9,7 @@ import com.example.foodviewer.mvp.model.requests.IIngredientDetails
 import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.mvp.presenters.list.ICocktailWithIngredientListPresenter
 import com.example.foodviewer.mvp.presenters.list.ICocktailsWithIngredientView
+import com.example.foodviewer.mvp.presenters.tab.ICocktailListChangeable
 import com.example.foodviewer.mvp.view.ICocktailWithIngredientsView
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
 import com.example.foodviewer.ui.App
@@ -24,8 +25,8 @@ import javax.inject.Named
 
 
 class CocktailsWithIngredientsPresenter(
-        val cocktails : List<Cocktail>?
-) : MvpPresenter<ICocktailWithIngredientsView>() {
+        var cocktails : List<Cocktail>?
+) : MvpPresenter<ICocktailWithIngredientsView>(), ICocktailListChangeable {
     @Inject
     lateinit var cocktailApi: ICocktailDetails
 
@@ -101,6 +102,13 @@ class CocktailsWithIngredientsPresenter(
                 }
         compositeDisposable.add(subscribe)
     }
+
+    override fun cocktailList(cocktailList: List<Cocktail>) {
+        cocktails = cocktailList
+        loadData()
+    }
+
+    override fun cocktailList(): List<Cocktail>? = cocktails
 
     override fun onDestroy() {
         compositeDisposable.dispose()

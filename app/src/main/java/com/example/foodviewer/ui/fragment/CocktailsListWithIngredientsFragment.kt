@@ -14,6 +14,7 @@ import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.presenters.CocktailsWithIngredientsPresenter
 import com.example.foodviewer.mvp.presenters.IngredientDetailsPresenter
+import com.example.foodviewer.mvp.presenters.tab.ICocktailListChangeable
 import com.example.foodviewer.mvp.view.ICocktailWithIngredientsView
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
 import com.example.foodviewer.ui.App
@@ -25,7 +26,7 @@ import moxy.ktx.moxyPresenter
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 
 class CocktailsListWithIngredientsFragment() : MvpAppCompatFragment(), ICocktailWithIngredientsView,
-        OnBackClickListener {
+        OnBackClickListener, ICocktailListChangeable {
     private var vb: FragmentCocktailsListWithIngredientsBinding? = null
     private var adapter: CocktailWithIngredientRVAdapter? = null
 
@@ -83,4 +84,10 @@ class CocktailsListWithIngredientsFragment() : MvpAppCompatFragment(), ICocktail
     override fun displayError(description: String) {
         Toast.makeText(requireContext(), description, Toast.LENGTH_LONG).show()
     }
+
+    override fun cocktailList(cocktailList: List<Cocktail>) {
+       presenter.cocktailList(cocktailList)
+    }
+
+    override fun cocktailList(): List<Cocktail>? = presenter.cocktailList()
 }

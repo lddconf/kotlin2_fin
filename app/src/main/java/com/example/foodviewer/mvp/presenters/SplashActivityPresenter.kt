@@ -2,7 +2,9 @@ package com.example.foodviewer.mvp.presenters
 
 import com.example.foodviewer.mvp.model.requests.ICocktailDetails
 import com.example.foodviewer.mvp.model.requests.IIngredientDetails
+import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.mvp.view.ISplashActivityView
+import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable.interval
 import io.reactivex.rxjava3.core.Scheduler
@@ -24,6 +26,12 @@ class SplashActivityPresenter() : MvpPresenter<ISplashActivityView>() {
     @field:Named("UIThread")
     lateinit var uiSchelduer: Scheduler
 
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var screens: IAppScreens
+
     companion object {
         const val SPLASH_ACTIVITY_TIMER_MS = 1500.toLong()
     }
@@ -42,7 +50,7 @@ class SplashActivityPresenter() : MvpPresenter<ISplashActivityView>() {
     }
 
     private fun updateCompleted() {
-        viewState.startMainActivityAndClose()
+        router.replaceScreen(screens.mainWindow())
     }
 
     override fun onDestroy() {

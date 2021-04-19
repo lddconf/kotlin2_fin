@@ -10,17 +10,20 @@ import com.example.foodviewer.mvp.presenters.SplashActivityPresenter
 import com.example.foodviewer.mvp.view.ISplashActivityView
 import com.example.foodviewer.ui.App
 import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
 class SplashActivity : MvpAppCompatActivity(), ISplashActivityView {
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
     private var vb: ActivitySplashBinding? = null
+    private val navigator = AppNavigator(this, R.id.container)
 
     companion object {
-        fun getIntent(context: Context) {
-            Intent(context, SplashActivity::class.java)
-        }
+        fun getIntent(context: Context) = Intent(context, SplashActivity::class.java)
     }
 
     private val presenter by moxyPresenter {
@@ -35,14 +38,18 @@ class SplashActivity : MvpAppCompatActivity(), ISplashActivityView {
         vb = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(vb?.root)
     }
-
-    override fun startMainActivityAndClose() {
-        startActivity(MainActivity.getIntent(this))
-        finish()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         vb = null
+    }
+
+    override fun onPause() {
+        super.onPause()
+        navigatorHolder.removeNavigator()
+    }
+
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        navigatorHolder.setNavigator(navigator)
     }
 }

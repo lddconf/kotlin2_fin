@@ -10,6 +10,7 @@ import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCocktailsDetailsTabBinding
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
 import com.example.foodviewer.mvp.model.entity.bar.IFavoriteCocktails
+import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.mvp.presenters.CocktailDetailsTabPresenter
 import com.example.foodviewer.mvp.view.ICocktailsDetailsTabView
@@ -69,15 +70,7 @@ class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
             tabLayoutMediator?.attach()
         }
     }
-/*
-    override fun updateTabs() {
-        cocktailsTabSPAdapter?.notifyDataSetChanged()
-    }
 
-    override fun updateTab(tabId: Int) {
-        cocktailsTabSPAdapter?.notifyItemChanged(tabId)
-    }
-*/
     companion object {
         @JvmStatic
         fun newInstance() = CocktailsDetailsTabFragment()
