@@ -27,8 +27,18 @@ interface CocktailGlassDao {
     fun deleteCGlass(cocktailRecipe: List<RoomCocktailGlass>)
 
     @Query("SELECT * FROM RoomCocktailGlass WHERE id = :glassId LIMIT 1")
-    fun findCGlassById(glassId: Long) :  RoomCocktailGlass?
+    fun findCGlassById(glassId: Long): RoomCocktailGlass?
 
-    @Query("SELECT * FROM RoomCocktailGlass WHERE UPPER(strGlass) LIKE UPPER(:glassName) LIMIT 1")
-    fun findCGlassByName(glassName: String) : RoomCocktailGlass?
+    @Query("SELECT * FROM RoomCocktailGlass WHERE strGlass IN(:glassName) LIMIT 1")
+    fun findCGlassByName(glassName: String): RoomCocktailGlass?
+
+    @Transaction
+    fun findCGlassByNameAndInsertIfNeeded(glassName: String): RoomCocktailGlass? {
+        var res = findCGlassByName(glassName)
+        if (res == null) {
+            insertCGlass(RoomCocktailGlass(id = 0, strGlass = glassName))
+            res = findCGlassByName(glassName)
+        }
+        return res
+    }
 }

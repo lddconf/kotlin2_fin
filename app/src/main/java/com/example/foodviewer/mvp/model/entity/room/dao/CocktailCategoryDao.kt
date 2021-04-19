@@ -2,6 +2,7 @@ package com.example.foodviewer.mvp.model.entity.room.dao
 
 import androidx.room.*
 import com.example.foodviewer.mvp.model.entity.room.RoomCocktailCategory
+import com.example.foodviewer.mvp.model.entity.room.RoomCocktailGlass
 
 @Dao
 interface CocktailCategoryDao {
@@ -26,6 +27,16 @@ interface CocktailCategoryDao {
     @Query("SELECT * FROM RoomCocktailCategory WHERE id = :categoryId LIMIT 1")
     fun findCCategoryById(categoryId: Long) :  RoomCocktailCategory?
 
-    @Query("SELECT * FROM RoomCocktailCategory WHERE UPPER(strCategory) LIKE UPPER(:categoryName) LIMIT 1")
+    @Query("SELECT * FROM RoomCocktailCategory WHERE strCategory IN(:categoryName) LIMIT 1")
     fun findCCategoryByName(categoryName: String) : RoomCocktailCategory?
+
+    @Transaction
+    fun findCCategoryByNameAndInsertIfNeeded(categoryName: String): RoomCocktailCategory? {
+        var res = findCCategoryByName(categoryName)
+        if (res == null) {
+            insertCCategory(RoomCocktailCategory(id = 0, strCategory = categoryName))
+            res = findCCategoryByName(categoryName)
+        }
+        return res
+    }
 }

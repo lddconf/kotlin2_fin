@@ -28,6 +28,16 @@ interface CocktailAlcoholicDao {
     @Query("SELECT * FROM RoomCocktailAlcoholic WHERE id = :alcoholicId LIMIT 1")
     fun findCAlcoholicById(alcoholicId: Long) :  RoomCocktailAlcoholic?
 
-    @Query("SELECT * FROM RoomCocktailAlcoholic WHERE UPPER(strAlcoholic) LIKE UPPER(:alcoholicName) LIMIT 1")
+    @Query("SELECT * FROM RoomCocktailAlcoholic WHERE strAlcoholic IN(:alcoholicName) LIMIT 1")
     fun findCAlcoholicByName(alcoholicName: String) :  RoomCocktailAlcoholic?
+
+    @Transaction
+    fun findCAlcoholicByNameAndInsertIfNeeded(alcoholicName: String) :  RoomCocktailAlcoholic? {
+        var res = findCAlcoholicByName(alcoholicName)
+        if ( res == null ) {
+            insertCAlcoholic(RoomCocktailAlcoholic(id = 0, strAlcoholic = alcoholicName))
+            res = findCAlcoholicByName(alcoholicName)
+        }
+        return res
+    }
 }

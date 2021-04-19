@@ -24,12 +24,15 @@ interface IngredientTypeDao {
     @Delete
     fun deleteIType(type: List<RoomIngredientType>)
 
+    @Transaction
     @Query("SELECT * from RoomIngredientType")
     fun getAll() : List<RoomIngredientType>
 
+    @Transaction
     @Query("SELECT * FROM RoomIngredientType WHERE id = :idIngredientType LIMIT 1")
     fun findITypeById(idIngredientType: Long) :  RoomIngredientType?
 
+    @Transaction
     @Query("SELECT * FROM RoomIngredientType WHERE typeName LIKE :ingredientType LIMIT 1")
     fun findITypeByName(ingredientType: String) :  RoomIngredientType?
 }

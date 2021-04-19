@@ -8,7 +8,8 @@ import java.lang.RuntimeException
 
 @Dao
 abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
-    fun insert(ingredient: RoomIngredient) = ingredient.apply {
+    @Transaction
+    open fun insert(ingredient: RoomIngredient) = ingredient.apply {
         var type: RoomIngredientType?
         type = findITypeByName(ingredientType.typeName ?: "")
 
@@ -27,11 +28,13 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
         } ?: throw RuntimeException("Invalid insert argument")
     }
 
-    fun insert(ingredients: List<RoomIngredient>) = ingredients.forEach {
+    @Transaction
+    open fun insert(ingredients: List<RoomIngredient>) = ingredients.forEach {
         insert(it)
     }
 
-    fun update(ingredient: RoomIngredient) {
+    @Transaction
+    open fun update(ingredient: RoomIngredient) {
         var ingredientType = findITypeByName(ingredient.ingredientType.typeName ?: "")
 
         if (ingredientType == null) {
@@ -50,7 +53,8 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
 
     fun delete(ingredient: RoomIngredient) = deleteIR(ingredient.roomIngredientRecord)
 
-    fun delete(ingredients: List<RoomIngredient>) = ingredients.map {
+    @Transaction
+    open fun delete(ingredients: List<RoomIngredient>) = ingredients.map {
         it.roomIngredientRecord
     }.apply {
         deleteIR(this)
