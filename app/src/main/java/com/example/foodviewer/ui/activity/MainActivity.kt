@@ -41,6 +41,11 @@ class MainActivity : MvpAppCompatActivity(), IMainActivityView {
         setContentView(vb?.root)
     }
 
+    override fun initAppBar() {
+        setSupportActionBar(vb?.mainToolbar)
+        supportActionBar?.title = getString(R.string.app_name)
+    }
+
     override fun onPause() {
         super.onPause()
         navigatorHolder.removeNavigator()

@@ -4,4 +4,6 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-interface IMainActivityView : MvpView
+interface IMainActivityView : MvpView {
+    fun initAppBar()
+}
