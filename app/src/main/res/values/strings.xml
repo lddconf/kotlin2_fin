@@ -20,5 +20,6 @@
     <string name="ingredient">ingredient</string>
     <string name="cocktail_added_to_favorites">Added to favorites</string>
     <string name="cocktail_removed_from_favorites">Removed from favorites</string>
+    <string name="search_text">Search</string>
 
 </resources>

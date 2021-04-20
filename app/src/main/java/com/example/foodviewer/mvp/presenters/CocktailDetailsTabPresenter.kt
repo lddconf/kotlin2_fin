@@ -136,7 +136,7 @@ class CocktailDetailsTabPresenter() : MvpPresenter<ICocktailsDetailsTabView>() {
 
     fun backClick(): Boolean {
         router.exit()
-        return false
+        return true
     }
 
     override fun onDestroy() {

@@ -23,7 +23,8 @@
     </style>
 
     <style name="AppBarTheme" parent="Theme.MaterialComponents.DayNight">
-
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
     <style name="AppBarPopupTheme" parent="Theme.MaterialComponents.Light">

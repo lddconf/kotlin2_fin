@@ -1,34 +1,24 @@
 package com.example.foodviewer.ui.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCocktailsDetailsTabBinding
-import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
-import com.example.foodviewer.mvp.model.entity.bar.IFavoriteCocktails
-import com.example.foodviewer.mvp.model.entity.json.Cocktail
-import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.mvp.presenters.CocktailDetailsTabPresenter
 import com.example.foodviewer.mvp.view.ICocktailsDetailsTabView
 import com.example.foodviewer.ui.App
 import com.example.foodviewer.ui.adapter.CocktailsTabSPAdapter
 import com.example.foodviewer.ui.listeners.OnBackClickListener
-import com.github.terrakok.cicerone.Router
 import com.google.android.material.tabs.TabLayoutMediator
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Named
 
-class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener, ICocktailsDetailsTabView {
+class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
+    ICocktailsDetailsTabView {
     private var vb: FragmentCocktailsDetailsTabBinding? = null
-    private var cocktailsTabSPAdapter : CocktailsTabSPAdapter? = null
+    private var cocktailsTabSPAdapter: CocktailsTabSPAdapter? = null
     private var tabLayoutMediator: TabLayoutMediator? = null
 
     private val presenter by moxyPresenter {
@@ -37,14 +27,47 @@ class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initAppBarMenu()
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? = FragmentCocktailsDetailsTabBinding.inflate(inflater, container, false).also {
+
         vb = it
     }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initAppBarMenu()
+    }
+
+    private fun initAppBarMenu() {
+        setHasOptionsMenu(true) //use appbar actions
+        val bar :View? = activity?.findViewById(R.id.main_toolbar)
+        bar?.let {
+            if ( bar is Toolbar ) {
+                bar.title = null
+                bar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                bar.setNavigationOnClickListener {
+                    presenter.backClick()
+                }
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.cocktails_search_menu, menu)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_search -> super.onOptionsItemSelected(item)
+        else -> super.onOptionsItemSelected(item)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

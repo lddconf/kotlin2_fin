@@ -33,9 +33,6 @@ class RoomFavoriteCocktails(val db: Database) : IFavoriteCocktails {
                     db.favoriteCocktail.insertFC(RoomFavoriteCocktail(
                         cocktailId = cocktailId
                     ))
-
-                    val test1 = db.favoriteCocktail.findIFCByCocktailId(cocktailId)
-                    val test2 = db.favoriteCocktail.findIFCByCocktailId(cocktailId)
                 } else {
                     db.favoriteCocktail.deleteFC(cocktailId)
                 }

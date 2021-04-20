@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import android.widget.ToggleButton
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
@@ -48,8 +49,23 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentIngredientDetailsBinding.inflate(inflater, container, false).also {
+        initAppBarMenu()
         ingredientDetailsBinding = it
     }.root
+
+    private fun initAppBarMenu() {
+        setHasOptionsMenu(true) //use appbar actions
+        val bar :View? = activity?.findViewById(R.id.main_toolbar)
+        bar?.let {
+            if ( bar is Toolbar) {
+                bar.title = null
+                bar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                bar.setNavigationOnClickListener {
+                    presenter.backClick()
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
