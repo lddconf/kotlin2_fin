@@ -28,6 +28,6 @@
     <string name="ingredients_nav_menu">Ingredients</string>
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
-    <string name="app_about_text">Simple Cocktail app\nAuthors unknown\n, 2021</string>
+    <string name="app_about_text">Simple Cocktail app\nAuthors unknown,\n 2021</string>
 
 </resources>

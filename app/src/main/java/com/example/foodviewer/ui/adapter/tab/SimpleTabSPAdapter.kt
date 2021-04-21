@@ -1,4 +1,4 @@
-package com.example.foodviewer.ui.adapter
+package com.example.foodviewer.ui.adapter.tab
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -8,7 +8,7 @@ import com.example.foodviewer.mvp.presenters.tab.ICocktailListChangeable
 import com.example.foodviewer.mvp.presenters.tab.ITabFramesProvider
 
 
-class CocktailsTabSPAdapter(val fragment: Fragment, val tabsViewPresenter: ITabFramesProvider) : FragmentStateAdapter(fragment) {
+class SimpleTabSPAdapter(val fragment: Fragment, val tabsViewPresenter: ITabFramesProvider) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int {
         return tabsViewPresenter.itemCount()
     }

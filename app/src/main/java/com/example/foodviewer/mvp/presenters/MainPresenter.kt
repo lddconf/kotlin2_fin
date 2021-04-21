@@ -11,7 +11,7 @@ import javax.inject.Inject
 class MainPresenter(
 ) : MvpPresenter<IMainActivityView>() {
 
-    private var currentNavScreen = NavigationMenuItem.ABOUT_MENU
+    private lateinit var  currentNavScreen: NavigationMenuItem
 
     @Inject
     lateinit var router: Router
@@ -21,9 +21,12 @@ class MainPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        currentNavScreen = NavigationMenuItem.COCKTAILS_MENU
+        router.replaceScreen(screens.cocktailsProperties())
+
         viewState.initAppBar()
         viewState.initNavigationDrawer()
-        showToCocktails()
     }
 
     fun restoreAppBar() {
@@ -37,26 +40,35 @@ class MainPresenter(
 
     fun currentScreenChanged(item : NavigationMenuItem) {
         viewState.selectMenuItem(item)
+        currentNavScreen = item
     }
 
     fun showAbout() : Boolean {
-        if ( currentNavScreen == NavigationMenuItem.ABOUT_MENU ) return true
+        if ( currentNavScreen == NavigationMenuItem.ABOUT_MENU ) {
+            viewState.selectMenuItem(NavigationMenuItem.ABOUT_MENU)
+            return true
+        }
         router.navigateTo(screens.aboutWindow())
-        currentNavScreen = NavigationMenuItem.ABOUT_MENU
         return true
     }
 
     fun showIngredients() : Boolean {
-        if ( currentNavScreen == NavigationMenuItem.INGREDIENT_MENU ) return true
+        if ( currentNavScreen == NavigationMenuItem.INGREDIENT_MENU ) {
+            viewState.selectMenuItem(NavigationMenuItem.INGREDIENT_MENU)
+            return true
+        }
+
         router.replaceScreen(screens.ingredients())
-        currentNavScreen = NavigationMenuItem.INGREDIENT_MENU
         return true
     }
 
     fun showToCocktails() : Boolean {
-        if ( currentNavScreen == NavigationMenuItem.COCKTAILS_MENU ) return true
+        if ( currentNavScreen == NavigationMenuItem.COCKTAILS_MENU ) {
+            viewState.selectMenuItem(NavigationMenuItem.COCKTAILS_MENU)
+            return true
+        }
         router.replaceScreen(screens.cocktailsProperties())
-        currentNavScreen = NavigationMenuItem.COCKTAILS_MENU
+
         return true
     }
 }

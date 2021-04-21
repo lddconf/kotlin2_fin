@@ -131,7 +131,7 @@ class MainActivity : MvpAppCompatActivity(), IMainActivityView, IFragmentAppRest
     override fun fragmentStarted() {
         when ( supportFragmentManager.findFragmentById(R.id.container) ) {
             is IAppAboutView -> presenter.currentScreenChanged(NavigationMenuItem.ABOUT_MENU)
-            is IIngredientDetailsView -> presenter.currentScreenChanged(NavigationMenuItem.INGREDIENT_MENU)
+            is IIngredientsDetailsTabView -> presenter.currentScreenChanged(NavigationMenuItem.INGREDIENT_MENU)
             is ICocktailsDetailsTabView -> presenter.currentScreenChanged(NavigationMenuItem.COCKTAILS_MENU)
         }
     }

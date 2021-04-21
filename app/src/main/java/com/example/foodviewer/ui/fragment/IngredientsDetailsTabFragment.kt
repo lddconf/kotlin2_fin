@@ -5,11 +5,12 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.foodviewer.R
-import com.example.foodviewer.databinding.FragmentCocktailsDetailsTabBinding
+import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
+import com.example.foodviewer.databinding.FragmentIngredientsDetailsTabBinding
 import com.example.foodviewer.mvp.fragments.IFragmentAppRestoreRequestListener
 import com.example.foodviewer.mvp.fragments.IFragmentStartedListener
-import com.example.foodviewer.mvp.presenters.CocktailDetailsTabPresenter
-import com.example.foodviewer.mvp.view.ICocktailsDetailsTabView
+import com.example.foodviewer.mvp.presenters.IngredientsDetailsTabPresenter
+import com.example.foodviewer.mvp.view.IIngredientsDetailsTabView
 import com.example.foodviewer.ui.App
 import com.example.foodviewer.ui.adapter.tab.SimpleTabSPAdapter
 import com.example.foodviewer.ui.listeners.OnBackClickListener
@@ -17,20 +18,20 @@ import com.google.android.material.tabs.TabLayoutMediator
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
-    ICocktailsDetailsTabView {
-    private var vb: FragmentCocktailsDetailsTabBinding? = null
-    private var cocktailsTabSPAdapter: SimpleTabSPAdapter? = null
+class IngredientsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
+    IIngredientsDetailsTabView {
+    private var vb: FragmentIngredientsDetailsTabBinding? = null
+    private var ingredientsTabSPAdapter: SimpleTabSPAdapter? = null
     private var tabLayoutMediator: TabLayoutMediator? = null
 
     private val presenter by moxyPresenter {
-        CocktailDetailsTabPresenter().apply { App.instance.appComponent.inject(this) }
+        IngredientsDetailsTabPresenter().apply { App.instance.appComponent.inject(this) }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = FragmentCocktailsDetailsTabBinding.inflate(inflater, container, false).also {
+    ): View? = FragmentIngredientsDetailsTabBinding.inflate(inflater, container, false).also {
         vb = it
     }.root
 
@@ -73,10 +74,10 @@ class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
 
     override fun initTabs() {
         tabLayoutMediator?.detach()
-        cocktailsTabSPAdapter = SimpleTabSPAdapter(this, presenter.tabsViewPresenter)
-        vb?.pager?.adapter = cocktailsTabSPAdapter
+        ingredientsTabSPAdapter = SimpleTabSPAdapter(this, presenter.tabsViewPresenter)
+        vb?.igdPager?.adapter = ingredientsTabSPAdapter
         vb?.apply {
-            tabLayoutMediator = TabLayoutMediator(tabLayout, pager) { tab, position ->
+            tabLayoutMediator = TabLayoutMediator(igdTabLayout, igdPager) { tab, position ->
                 presenter.tabsViewPresenter.fragmentFactory(position)?.also {
                     tab.text = it.tabName
                 }
@@ -101,6 +102,6 @@ class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
 
     companion object {
         @JvmStatic
-        fun newInstance() = CocktailsDetailsTabFragment()
+        fun newInstance() = IngredientsDetailsTabFragment()
     }
 }

@@ -5,10 +5,7 @@ import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.ui.activity.MainActivity
 import com.example.foodviewer.ui.activity.SplashActivity
-import com.example.foodviewer.ui.fragment.AppAboutFragment
-import com.example.foodviewer.ui.fragment.CocktailDetailsFragment
-import com.example.foodviewer.ui.fragment.CocktailsDetailsTabFragment
-import com.example.foodviewer.ui.fragment.IngredientDetailsFragment
+import com.example.foodviewer.ui.fragment.*
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.ActivityScreen
 import com.github.terrakok.cicerone.androidx.FragmentScreen
@@ -36,7 +33,7 @@ class AndroidAppScreens : IAppScreens {
     }
 
     override fun ingredients(): Screen = FragmentScreen {
-        CocktailsDetailsTabFragment.newInstance()
+        IngredientsDetailsTabFragment.newInstance()
     }
 
     override fun aboutWindow(): Screen = FragmentScreen {
