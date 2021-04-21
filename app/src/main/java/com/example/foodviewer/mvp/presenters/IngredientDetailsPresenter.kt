@@ -49,6 +49,7 @@ class IngredientDetailsPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        viewState.initAppBar()
         ingredientName?.let {
             loadData()
         }

@@ -6,4 +6,5 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 @AddToEndSingle
 interface IMainActivityView : MvpView {
     fun initAppBar()
+    fun initNavigationDrawer()
 }

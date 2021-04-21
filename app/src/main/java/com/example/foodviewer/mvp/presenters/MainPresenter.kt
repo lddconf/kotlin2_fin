@@ -20,8 +20,15 @@ class MainPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.initAppBar()
-        router.navigateTo(screens.cocktailsProperties())
+        viewState.initNavigationDrawer()
+        router.replaceScreen(screens.cocktailsProperties())
     }
+
+    fun restoreAppBar() {
+        viewState.initAppBar()
+        viewState.initNavigationDrawer()
+    }
+
 
     fun backClicked() {
         router.exit()

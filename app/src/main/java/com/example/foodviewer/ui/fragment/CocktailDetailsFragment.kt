@@ -11,11 +11,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCoctailDetailsBinding
+import com.example.foodviewer.mvp.fragments.IFragmentAppRestoreRequestListener
 import com.example.foodviewer.mvp.presenters.CocktailDetailsPresenter
 import com.example.foodviewer.mvp.view.ICocktailDetailsView
 import com.example.foodviewer.ui.App
 import com.example.foodviewer.ui.adapter.IngredientsAmountRVAdapter
-import com.example.foodviewer.ui.image.GlideImageLoader
 import com.example.foodviewer.ui.listeners.OnBackClickListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -48,15 +48,17 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? = FragmentCoctailDetailsBinding.inflate(inflater, container, false).also {
-        initAppBarMenu()
+
         cocktailDetailsBinding = it
     }.root
 
-    private fun initAppBarMenu() {
+    override fun initAppBar() {
+        appBarRestore()
         setHasOptionsMenu(true) //use appbar actions
         val bar :View? = activity?.findViewById(R.id.main_toolbar)
         bar?.let {
             if ( bar is Toolbar) {
+                bar.title = null
                 bar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                 bar.setNavigationOnClickListener {
                     presenter.backClick()
@@ -67,9 +69,6 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
         cocktailDetailsBinding?.cocktailRecipe?.setOnClickListener {
             presenter.recipeViewClicked()
         }
@@ -77,6 +76,13 @@ class CocktailDetailsFragment() : MvpAppCompatFragment(), ICocktailDetailsView,
         cocktailDetailsBinding?.cocktailFavorite?.setOnClickListener {
             it as ToggleButton
             presenter.favoriteChanged(it.isChecked)
+        }
+    }
+
+    private fun appBarRestore() {
+        val parent = activity
+        if ( parent is IFragmentAppRestoreRequestListener ) {
+            parent.restoreRequest()
         }
     }
 

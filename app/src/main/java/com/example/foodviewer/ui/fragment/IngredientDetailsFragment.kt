@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientDetailsBinding
+import com.example.foodviewer.mvp.fragments.IFragmentAppRestoreRequestListener
 import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.presenters.IngredientDetailsPresenter
 import com.example.foodviewer.mvp.view.IIngredientDetailsView
@@ -49,11 +50,11 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentIngredientDetailsBinding.inflate(inflater, container, false).also {
-        initAppBarMenu()
         ingredientDetailsBinding = it
     }.root
 
-    private fun initAppBarMenu() {
+    override fun initAppBar() {
+        appBarRestore()
         setHasOptionsMenu(true) //use appbar actions
         val bar :View? = activity?.findViewById(R.id.main_toolbar)
         bar?.let {
@@ -64,6 +65,13 @@ class IngredientDetailsFragment() : MvpAppCompatFragment(), IIngredientDetailsVi
                     presenter.backClick()
                 }
             }
+        }
+    }
+
+    private fun appBarRestore() {
+        val parent = activity
+        if ( parent is IFragmentAppRestoreRequestListener) {
+            parent.restoreRequest()
         }
     }
 

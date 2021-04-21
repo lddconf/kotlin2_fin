@@ -29,4 +29,5 @@ interface IIngredientDetailsView : MvpView {
     @Skip
     fun updateCocktailsWithList(cocktails : List<Cocktail>)
 
+    fun initAppBar()
 }

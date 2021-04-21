@@ -30,4 +30,6 @@ interface ICocktailDetailsView : MvpView {
 
     fun initIngredients()
     fun updateIngredientList()
+
+    fun initAppBar()
 }

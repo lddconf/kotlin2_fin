@@ -21,5 +21,12 @@
     <string name="cocktail_added_to_favorites">Added to favorites</string>
     <string name="cocktail_removed_from_favorites">Removed from favorites</string>
     <string name="search_text">Search</string>
+    <string name="nav_header_user_email">User email</string>
+    <string name="nav_header_user_avatar">User avatar</string>
+    <string name="about_nav_menu">About</string>
+    <string name="cocktails_nav_menu">Cocktails</string>
+    <string name="ingredients_nav_menu">Ingredients</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 
 </resources>

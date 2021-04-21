@@ -79,11 +79,10 @@ class CocktailDetailsPresenter(
         override fun getCount(): Int = ingredients.size
     }
 
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.initIngredients()
-
+        viewState.initAppBar()
         cocktailId?.let {
             loadCocktailDetails()
         }
@@ -100,7 +99,6 @@ class CocktailDetailsPresenter(
                 }
         compositeDisposable.add(barChangedSubscription)
     }
-
 
     override fun onDestroy() {
         compositeDisposable.dispose()

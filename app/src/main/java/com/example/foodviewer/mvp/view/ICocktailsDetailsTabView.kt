@@ -13,4 +13,6 @@ interface ICocktailsDetailsTabView : MvpView {
     fun displayError(description: String)
 
     fun initTabs()
+
+    fun initAppBar()
 }

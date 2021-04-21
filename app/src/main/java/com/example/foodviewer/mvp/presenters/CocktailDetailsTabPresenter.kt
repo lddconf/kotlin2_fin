@@ -126,6 +126,7 @@ class CocktailDetailsTabPresenter() : MvpPresenter<ICocktailsDetailsTabView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.initTabs()
+        viewState.initAppBar()
         loadAllCocktailsList()
         val subscribe = favoriteCocktails.favoriteCocktailChangedById().observeOn(uiSchelduer)
             .subscribe { favoriteState ->
