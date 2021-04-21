@@ -8,7 +8,8 @@ interface IAppScreens {
     fun ingredientDetails(ingredientName: String?): Screen
 
     fun cocktailsProperties(): Screen
+    fun ingredients() : Screen
     fun splashWindow(): Screen
     fun mainWindow(): Screen
-
+    fun aboutWindow() : Screen
 }

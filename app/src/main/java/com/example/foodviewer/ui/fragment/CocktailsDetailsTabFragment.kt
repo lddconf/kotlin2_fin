@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentCocktailsDetailsTabBinding
 import com.example.foodviewer.mvp.fragments.IFragmentAppRestoreRequestListener
+import com.example.foodviewer.mvp.fragments.IFragmentStartedListener
 import com.example.foodviewer.mvp.presenters.CocktailDetailsTabPresenter
 import com.example.foodviewer.mvp.view.ICocktailsDetailsTabView
 import com.example.foodviewer.ui.App
@@ -51,6 +52,11 @@ class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        notifyParentFragmentStarted()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_search -> super.onOptionsItemSelected(item)
         else -> super.onOptionsItemSelected(item)
@@ -85,6 +91,13 @@ class CocktailsDetailsTabFragment : MvpAppCompatFragment(), OnBackClickListener,
         val parent = activity
         if ( parent is IFragmentAppRestoreRequestListener) {
             parent.restoreRequest()
+        }
+    }
+
+    private fun notifyParentFragmentStarted() {
+        val parent = activity
+        if ( parent is IFragmentStartedListener) {
+            parent.fragmentStarted()
         }
     }
 

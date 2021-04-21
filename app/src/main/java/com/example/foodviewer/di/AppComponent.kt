@@ -34,6 +34,7 @@ interface AppComponent {
     fun inject(cocktailsWithIngredientsPresenter: CocktailsWithIngredientsPresenter)
     fun inject(cocktailWithIngredientPresenter: CocktailsWithIngredientsPresenter.CocktailWithIngredientPresenter)
     fun inject(cocktailDetailsTabPresenter: CocktailDetailsTabPresenter)
+    fun inject(fragmentAppAboutPresenter : FragmentAppAboutPresenter)
 
     fun inject(mainActivity: MainActivity)
     fun inject(splashActivity: SplashActivity)

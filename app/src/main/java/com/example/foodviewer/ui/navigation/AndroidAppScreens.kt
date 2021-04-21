@@ -5,6 +5,7 @@ import com.example.foodviewer.mvp.model.entity.json.Cocktail
 import com.example.foodviewer.mvp.navigation.IAppScreens
 import com.example.foodviewer.ui.activity.MainActivity
 import com.example.foodviewer.ui.activity.SplashActivity
+import com.example.foodviewer.ui.fragment.AppAboutFragment
 import com.example.foodviewer.ui.fragment.CocktailDetailsFragment
 import com.example.foodviewer.ui.fragment.CocktailsDetailsTabFragment
 import com.example.foodviewer.ui.fragment.IngredientDetailsFragment
@@ -32,5 +33,13 @@ class AndroidAppScreens : IAppScreens {
 
     override fun mainWindow(): Screen = ActivityScreen {
         MainActivity.getIntent(it)
+    }
+
+    override fun ingredients(): Screen = FragmentScreen {
+        CocktailsDetailsTabFragment.newInstance()
+    }
+
+    override fun aboutWindow(): Screen = FragmentScreen {
+        AppAboutFragment.newInstance()
     }
 }
