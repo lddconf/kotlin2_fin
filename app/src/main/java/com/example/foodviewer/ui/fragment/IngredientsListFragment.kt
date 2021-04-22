@@ -7,29 +7,33 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.foodviewer.R
 import com.example.foodviewer.databinding.FragmentIngredientsListBinding
 import com.example.foodviewer.mvp.presenters.IngredientsListPresenter
 import com.example.foodviewer.mvp.view.IIngredientsListView
 import com.example.foodviewer.ui.App
-import com.example.foodviewer.ui.adapter.IngredientsAmountRVAdapter
-import com.example.foodviewer.ui.adapter.IngredientsInBarRVAdapter
+import com.example.foodviewer.ui.adapter.IngredientsInBarRVAdapterCheckableInBar
 import com.example.foodviewer.ui.listeners.OnBackClickListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 import javax.inject.Inject
 
-class IngredientsListFragment() : MvpAppCompatFragment(), IIngredientsListView,
+open class IngredientsListFragment() : MvpAppCompatFragment(), IIngredientsListView,
         OnBackClickListener {
-    private var ingredientsListBinding: FragmentIngredientsListBinding? = null
-    private var adapter: IngredientsInBarRVAdapter? = null
+    protected var ingredientsListBinding: FragmentIngredientsListBinding? = null
+    protected var adapter: IngredientsInBarRVAdapterCheckableInBar? = null
 
     @Inject
     lateinit var imageLoader: IImageLoader<ImageView>
 
 
-    private val presenter by moxyPresenter {
-        IngredientsListPresenter().apply { App.instance.appComponent.inject(this) }
+    protected val presenter by moxyPresenter {
+        createPresenter().apply { App.instance.appComponent.inject(this) }
+    }
+
+    protected open fun createPresenter() : IngredientsListPresenter {
+        return IngredientsListPresenter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +62,6 @@ class IngredientsListFragment() : MvpAppCompatFragment(), IIngredientsListView,
 
         @JvmStatic
         fun newInstance() = IngredientsListFragment()
-
     }
 
     override fun onBackClicked(): Boolean = presenter.backClick()
@@ -66,7 +69,7 @@ class IngredientsListFragment() : MvpAppCompatFragment(), IIngredientsListView,
     override fun initIngredientsList() {
         ingredientsListBinding?.ingredientsList?.layoutManager =
                 LinearLayoutManager(requireContext())
-        adapter = IngredientsInBarRVAdapter(presenter.ingredientDetailsPresenter, imageLoader)
+        adapter = IngredientsInBarRVAdapterCheckableInBar(presenter.ingredientDetailsPresenter, imageLoader)
         ingredientsListBinding?.ingredientsList?.adapter = adapter
     }
 
@@ -80,5 +83,21 @@ class IngredientsListFragment() : MvpAppCompatFragment(), IIngredientsListView,
 
     override fun displayError(description: String) {
         Toast.makeText(requireContext(), description, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showIngredientAddedNotification(ingredientName: String) {
+        Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.ingredient_added_to_bar) + "$ingredientName",
+                Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun showIngredientRemovedNotification(ingredientName: String) {
+        Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.ingredient_removed_from__bar) + "$ingredientName",
+                Toast.LENGTH_SHORT
+        ).show()
     }
 }

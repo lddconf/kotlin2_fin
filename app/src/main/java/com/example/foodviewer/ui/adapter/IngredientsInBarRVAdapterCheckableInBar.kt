@@ -3,7 +3,6 @@ package com.example.foodviewer.ui.adapter
 import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toDrawable
@@ -14,14 +13,16 @@ import com.example.foodviewer.mvp.presenters.IngredientsListPresenter
 import com.example.foodviewer.mvp.presenters.list.IIngredientsListItemView
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 
-class IngredientsInBarRVAdapter(
+
+
+open class IngredientsInBarRVAdapterCheckableInBar(
     val presenter: IngredientsListPresenter.IngredientsDetailsPresenter,
     val imageLoader: IImageLoader<ImageView>
 ) :
-    RecyclerView.Adapter<IngredientsInBarRVAdapter.ViewHolder>() {
+    RecyclerView.Adapter<IngredientsInBarRVAdapterCheckableInBar.IngredientsInBarViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientsInBarViewHolder =
+        IngredientsInBarViewHolder(
             IngredientsListItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -36,18 +37,17 @@ class IngredientsInBarRVAdapter(
             }
         }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: IngredientsInBarViewHolder, position: Int) {
         presenter.bindView(holder.apply {
             pos = position
-
         })
     }
 
     override fun getItemCount(): Int = presenter.getCount()
 
-    open inner class ViewHolder(val vb: IngredientsListItemBinding) :
-        RecyclerView.ViewHolder(vb.root),
-        IIngredientsListItemView {
+    inner class IngredientsInBarViewHolder(val vb: IngredientsListItemBinding) :
+            RecyclerView.ViewHolder(vb.root),
+            IIngredientsListItemView {
 
         override var pos = -1
 
@@ -63,19 +63,20 @@ class IngredientsInBarRVAdapter(
             ingredientAlternatives.text = text
         }
 
-        open override fun ingredientExists(state: Boolean) = with(vb) {
+        override fun ingredientExists(state: Boolean) = with(vb) {
             ingredientInBar.isChecked = state
             if (!state) {
                 rootLayout.setBackgroundColor(Color.TRANSPARENT)
             } else {
                 rootLayout.background = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     ingredientInBar.context.resources.getColor(R.color.ingredient_exists)
-                        .toDrawable()
+                            .toDrawable()
                 } else {
                     ingredientInBar.context.resources.getColor(R.color.ingredient_exists, null)
-                        .toDrawable()
+                            .toDrawable()
                 }
             }
         }
     }
+
 }

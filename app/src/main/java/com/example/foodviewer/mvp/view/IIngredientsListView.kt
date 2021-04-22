@@ -15,4 +15,9 @@ interface IIngredientsListView : MvpView {
 
     @Skip
     fun updateIngredientInList(index: Int)
+
+    @Skip
+    fun showIngredientAddedNotification(ingredientName: String)
+    @Skip
+    fun showIngredientRemovedNotification(ingredientName: String)
 }

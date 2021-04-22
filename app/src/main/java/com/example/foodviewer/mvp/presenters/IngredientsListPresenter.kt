@@ -9,7 +9,7 @@ import com.example.foodviewer.mvp.presenters.list.IIngredientsListItemView
 import com.example.foodviewer.mvp.presenters.list.IIngredientsListPresenter
 import com.example.foodviewer.mvp.view.IIngredientsListView
 import com.example.foodviewer.ui.App
-import com.example.foodviewer.ui.adapter.IngredientsInBarRVAdapter
+import com.example.foodviewer.ui.adapter.IngredientsInBarRVAdapterCheckableInBar
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -51,7 +51,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
     }
 
     data class Ingredient(
-        val name: String
+            val name: String
     )
 
     class IngredientsDetailsPresenter() : IIngredientsListPresenter {
@@ -63,7 +63,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         override var itemClickListener: ((IIngredientsListItemView) -> Unit)? = null
         override var itemInBarCheckedListener: ((Int, Boolean) -> Unit)? = null
 
-        override fun bindView(view: IngredientsInBarRVAdapter.ViewHolder) = with(view) {
+        override fun bindView(view: IngredientsInBarRVAdapterCheckableInBar.IngredientsInBarViewHolder) = with(view) {
             val ingredient = ingredients[view.pos]
 
             with(ingredient.first) {
@@ -86,14 +86,15 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         ingredientDetailsPresenter.itemInBarCheckedListener = { pos, state ->
             val ingredient = ingredientDetailsPresenter.ingredients[pos]
             barProperties.setupIngredientByName(ingredient.first.name, state)
-                .observeOn(uiSchelduer)
-                .subscribe({
-                    ingredientDetailsPresenter.ingredients[pos] = ingredientDetailsPresenter.ingredients[pos].copy(second = state)
-                    viewState.updateIngredientInList(pos)
-                }, { error ->
-
-                }
-                )
+                    .observeOn(uiSchelduer)
+                    .subscribe({
+                        ingredientDetailsPresenter.ingredients[pos] = ingredientDetailsPresenter.ingredients[pos].copy(second = state)
+                        viewState.updateIngredientInList(pos)
+                        if (state) viewState.showIngredientAddedNotification(ingredient.first.name) else viewState.showIngredientRemovedNotification(ingredient.first.name)
+                    }, { error ->
+                        viewState.updateIngredientInList(pos)
+                        viewState.displayError(error.localizedMessage ?: "Internal error occurred")
+                    })
         }
 
 
@@ -103,10 +104,10 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         }
 
         barChangedSubscription = barProperties.ingredientInBarChangedByName()
-            .observeOn(uiSchelduer)
-            .subscribe {
-                ingredientInBarChanged(it)
-            }
+                .observeOn(uiSchelduer)
+                .subscribe {
+                    ingredientInBarChanged(it)
+                }
         compositeDisposable.add(barChangedSubscription)
     }
 
@@ -123,40 +124,40 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
     private fun checkIngredientsInBar(ingredients: List<Ingredient>) {
         val ingredientNames = ingredients.map { it.name }
         barProperties.ingredientPresentByNames(ingredientNames).observeOn(uiSchelduer)
-            .subscribe({ presents ->
-                displayCocktailIngredientsDetails(ingredients.zip(presents))
-            },
-                { error ->
-                    displayCocktailIngredientsDetails(
-                        ingredients.zip(
-                            MutableList(ingredients.size) { false }
-                        ))
-                    viewState.displayError(
-                        error.localizedMessage
-                            ?: "Internal error occurred"
-                    )
-                })
+                .subscribe({ presents ->
+                    displayCocktailIngredientsDetails(ingredients.zip(presents))
+                },
+                        { error ->
+                            displayCocktailIngredientsDetails(
+                                    ingredients.zip(
+                                            MutableList(ingredients.size) { false }
+                                    ))
+                            viewState.displayError(
+                                    error.localizedMessage
+                                            ?: "Internal error occurred"
+                            )
+                        })
     }
 
     private fun loadIngredients() {
         val disposable1 = ingredientsApi
-            .allIngredients()
-            .observeOn(uiSchelduer)
-            .subscribe({ ingredients ->
-                checkIngredientsInBar(ingredients.map { Ingredient(it.strIngredient1) }
-                    .sortedBy { it.name })
-            },
-                { error ->
-                    viewState.displayError(
-                        error.localizedMessage
-                            ?: "Internal error occurred"
-                    )
-                })
+                .allIngredients()
+                .observeOn(uiSchelduer)
+                .subscribe({ ingredients ->
+                    checkIngredientsInBar(ingredients.map { Ingredient(it.strIngredient1) }
+                            .sortedBy { it.name })
+                },
+                        { error ->
+                            viewState.displayError(
+                                    error.localizedMessage
+                                            ?: "Internal error occurred"
+                            )
+                        })
         compositeDisposable.addAll(disposable1)
     }
 
     private fun displayCocktailIngredientsDetails(
-        ingredientsPresent: List<Pair<IngredientsListPresenter.Ingredient, Boolean>>
+            ingredientsPresent: List<Pair<IngredientsListPresenter.Ingredient, Boolean>>
     ) {
         ingredientDetailsPresenter.ingredients.clear()
         ingredientDetailsPresenter.ingredients.addAll(ingredientsPresent)
@@ -167,7 +168,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         ingredientDetailsPresenter.ingredients.forEachIndexed { index, pair ->
             if (pair.first.name == ingredientChanged.name) {
                 ingredientDetailsPresenter.ingredients[index] =
-                    ingredientDetailsPresenter.ingredients[index].copy(second = ingredientChanged.present)
+                        ingredientDetailsPresenter.ingredients[index].copy(second = ingredientChanged.present)
                 viewState.updateIngredientsList()
                 return
             }

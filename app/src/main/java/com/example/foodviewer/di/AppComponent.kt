@@ -6,24 +6,25 @@ import com.example.foodviewer.ui.activity.MainActivity
 import com.example.foodviewer.ui.activity.SplashActivity
 import com.example.foodviewer.ui.fragment.CocktailDetailsFragment
 import com.example.foodviewer.ui.fragment.IngredientsDetailsTabFragment
+import com.example.foodviewer.ui.fragment.IngredientsInBarListFragment
 import com.example.foodviewer.ui.fragment.IngredientsListFragment
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [
-        ApiModule::class,
-        AppModule::class,
-        CiceroneModule::class,
-        DatabaseModule::class,
-        ImageLoaderModule::class,
-        JavaRxSchelduesModule::class,
-        MyCocktailsModule::class,
-        CocktailDetailsModule::class,
-        CacheModule::class,
-        CocktailsTabsGroup::class
-    ]
+        modules = [
+            ApiModule::class,
+            AppModule::class,
+            CiceroneModule::class,
+            DatabaseModule::class,
+            ImageLoaderModule::class,
+            JavaRxSchelduesModule::class,
+            MyCocktailsModule::class,
+            CocktailDetailsModule::class,
+            CacheModule::class,
+            CocktailsTabsGroup::class
+        ]
 )
 interface AppComponent {
     fun inject(mainPresenter: MainPresenter)
@@ -41,7 +42,7 @@ interface AppComponent {
     fun inject(ingredientsListFragment: IngredientsListFragment)
     fun inject(ingredientsListPresenter: IngredientsListPresenter)
     fun inject(ingredientsDetailsPresenter: IngredientsListPresenter.IngredientsDetailsPresenter)
-
+    fun inject(ingredientsInBarListFragment: IngredientsInBarListFragment)
     fun inject(mainActivity: MainActivity)
     fun inject(splashActivity: SplashActivity)
 }
