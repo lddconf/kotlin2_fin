@@ -24,7 +24,7 @@ class MainPresenter(
 
         currentNavScreen = NavigationMenuItem.COCKTAILS_MENU
         router.replaceScreen(screens.cocktailsProperties())
-
+        //router.replaceScreen(screens.ingredientsInBar())
         viewState.initAppBar()
         viewState.initNavigationDrawer()
     }

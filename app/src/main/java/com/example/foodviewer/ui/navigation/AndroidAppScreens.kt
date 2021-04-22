@@ -39,4 +39,8 @@ class AndroidAppScreens : IAppScreens {
     override fun aboutWindow(): Screen = FragmentScreen {
         AppAboutFragment.newInstance()
     }
+
+    override fun ingredientsInBar(): Screen = FragmentScreen {
+        IngredientsListFragment.newInstance()
+    }
 }

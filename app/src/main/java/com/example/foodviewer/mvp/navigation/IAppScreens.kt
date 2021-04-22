@@ -12,4 +12,8 @@ interface IAppScreens {
     fun splashWindow(): Screen
     fun mainWindow(): Screen
     fun aboutWindow() : Screen
+
+
+
+    fun ingredientsInBar() : Screen
 }
