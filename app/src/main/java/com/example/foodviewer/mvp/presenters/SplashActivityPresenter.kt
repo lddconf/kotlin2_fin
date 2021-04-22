@@ -47,6 +47,9 @@ class SplashActivityPresenter() : MvpPresenter<ISplashActivityView>() {
         disposable = timer.observeOn(uiSchelduer).subscribe {
             updateCompleted()
         }
+
+        //Update all ingredients database
+        
     }
 
     private fun updateCompleted() {
