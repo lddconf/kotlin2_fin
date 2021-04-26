@@ -59,7 +59,7 @@ class SplashActivityPresenter() : MvpPresenter<ISplashActivityView>() {
             updateCompleted()
         }, { error->
             viewState.displayError(error.localizedMessage ?: "")
-            router.exit()
+            updateCompleted()
         })
 
 

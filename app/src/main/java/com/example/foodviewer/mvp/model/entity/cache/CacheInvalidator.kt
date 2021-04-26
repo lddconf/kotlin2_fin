@@ -12,39 +12,32 @@ import io.reactivex.rxjava3.functions.BiConsumer
 import io.reactivex.rxjava3.schedulers.Schedulers
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
 import com.example.foodviewer.mvp.model.entity.toCocktailDetails
+import java.util.concurrent.TimeUnit
 
 class CacheInvalidator(val api: IDataSource,
                        val cocktailsCache: ICocktailsCache,
                        val ingredientsCache: IIngredientsCache) : ICacheInvalidator {
 
-    private fun getAllIngredients(ingredients: List<String>) : Single<List<IngredientsDescription>> = Single.fromCallable {
-        if (ingredients.isEmpty()) {
-            throw RuntimeException("Ingredient was not found")
+    private fun getAllIngredients(ingredients: List<String>) : Single<List<IngredientsDescription?>> {
+        return if (ingredients.isEmpty()) {
+            Single.error(RuntimeException("Ingredient was not found"))
         } else {
-            lateinit var result: Observable<IngredientsDescription>
-            ingredients.forEachIndexed { index, ingredientName ->
-                result = if (index == 0) {
-                    api.searchIngredientByName(ingredientName).toObservable()
-                } else {
-                    result.mergeWith(api.searchIngredientByName(ingredientName).toObservable())
-                }
+            val result = Observable.fromIterable(ingredients).delay(1, TimeUnit.MILLISECONDS).flatMap { ingredientName->
+                api.searchIngredientByName(ingredientName).onErrorReturn {
+                    ingredientName
+                    null
+                }.toObservable()
             }
-            result.collectInto(mutableListOf<IngredientsDescription>(), BiConsumer { l, i -> l.add(i) })
+            result.collectInto(mutableListOf<IngredientsDescription?>(), BiConsumer { l, i -> l.add(i) }).map { it.toList() }
         }
-    }.map { }.subscribeOn(Schedulers.io())
-
-
-    fun invalidateCacheIngredients(ingredients: List<String>): Completable = Single.fromCallable {
-
     }
-/*
-    flatMapCompletable { list ->
-        list.map { it->
-            ingredientsCache.put(it.flatMap { it.ingredients })
-        }
+
+    fun invalidateCacheIngredients(ingredients: List<String>): Completable = getAllIngredients(ingredients).map { list ->
+        ingredientsCache.put(list.flatMap { it?.ingredients ?: listOf() })
+    }.flatMapCompletable {
         Completable.complete()
     }.subscribeOn(Schedulers.io())
-*/
+
     private fun cocktailListByAlcoholic(type: AlcoholicType): Single<List<Cocktail>> =
             api.filterByAlcoholicType(type.strAlcoholic.replace(' ', '_')).flatMap { cocktails ->
                 if (cocktails.cocktails.isEmpty()) {
@@ -60,32 +53,22 @@ class CacheInvalidator(val api: IDataSource,
         if (typesList.types.isEmpty()) {
             Single.error(RuntimeException("No cocktails was found"))
         } else {
-            lateinit var request: Observable<List<Cocktail>>
-            typesList.types.forEachIndexed { index, alcoholicType ->
-                if (index == 0) {
-                    request = cocktailListByAlcoholic(alcoholicType).toObservable()
-                } else {
-                    request = request.mergeWith(cocktailListByAlcoholic(alcoholicType).toObservable())
-                }
+            val request = Observable.fromIterable(typesList.types).delay(1, TimeUnit.MILLISECONDS).flatMap { alcoholicType->
+                cocktailListByAlcoholic(alcoholicType).onErrorReturn { null }.toObservable()
             }
-            request.collectInto(mutableListOf<Cocktail>(), BiConsumer { l, i -> l.addAll(i) })
+            request.collectInto(mutableListOf<Cocktail?>(), BiConsumer { l, i -> l.addAll(i) })
         }
-    }.map { result -> result.distinctBy { it.idDrink }.toList() }.flatMap { cocktails ->
+    }.map { result -> result.filterNotNull().distinctBy { it.idDrink }.toList() }.flatMap { cocktails ->
         if (cocktails.isEmpty()) {
             Single.error(RuntimeException("Ingredient was not found"))
         } else {
-            lateinit var result: Observable<CocktailsDetailsJSON>
-            cocktails.forEachIndexed { index, cocktail ->
-                if (index == 0) {
-                    result = api.searchCocktailByName(cocktail.strDrink).toObservable()
-                } else {
-                    result = result.mergeWith(api.searchCocktailByName(cocktail.strDrink).toObservable())
-                }
+            val result = Observable.fromIterable(cocktails.filterNotNull()).delay(1, TimeUnit.MILLISECONDS).flatMap { cocktail->
+                api.searchCocktailByName(cocktail.strDrink).onErrorReturn { null }.toObservable()
             }
-            result.collectInto(mutableListOf<CocktailsDetailsJSON>(), BiConsumer { l, i -> l.add(i) })
+            result.collectInto(mutableListOf<CocktailsDetailsJSON?>(), BiConsumer { l, i -> l.add(i) })
         }
     }.map { list ->
-        val cocktails = list.flatMap { it.cocktails }.map { it.toCocktailDetails() }
+        val cocktails = list.filterNotNull().flatMap { it.cocktails }.map { it.toCocktailDetails() }
         cocktailsCache.put(cocktails)
         cocktails.flatMap { it.ingredients.map { ingredient -> ingredient.name } }.distinct()
     }.flatMapCompletable { it ->

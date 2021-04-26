@@ -58,7 +58,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         @Inject
         lateinit var ingredientsApi: IIngredientDetails
 
-        open var ingredients = mutableListOf<Pair<Ingredient, Boolean>>()
+        var ingredients = mutableListOf<Pair<Ingredient, Boolean>>()
 
         override var itemClickListener: ((IIngredientsListItemView) -> Unit)? = null
         override var itemInBarCheckedListener: ((Int, Boolean) -> Unit)? = null
