@@ -1,9 +1,7 @@
 package com.example.foodviewer.di.module
 
-import com.example.foodviewer.mvp.model.entity.cache.ICocktailsCache
-import com.example.foodviewer.mvp.model.entity.cache.IIngredientsCache
-import com.example.foodviewer.mvp.model.entity.cache.RoomCocktailsCache
-import com.example.foodviewer.mvp.model.entity.cache.RoomIngredientsCache
+import com.example.foodviewer.mvp.model.api.IDataSource
+import com.example.foodviewer.mvp.model.entity.cache.*
 import com.example.foodviewer.mvp.model.entity.room.db.Database
 import dagger.Module
 import dagger.Provides
@@ -18,4 +16,8 @@ class CacheModule {
     @Singleton
     @Provides
     fun cocktailsCache(db: Database) : ICocktailsCache = RoomCocktailsCache(db)
+
+    @Singleton
+    @Provides
+    fun cacheInvalidator(api: IDataSource, cocktailsCache: ICocktailsCache, ingredientsCache : IIngredientsCache) : ICacheInvalidator = CacheInvalidator(api, cocktailsCache, ingredientsCache)
 }

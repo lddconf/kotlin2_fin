@@ -1,5 +1,7 @@
 package com.example.foodviewer.mvp.presenters
 
+import com.example.foodviewer.mvp.model.entity.cache.CacheInvalidator
+import com.example.foodviewer.mvp.model.entity.cache.ICacheInvalidator
 import com.example.foodviewer.mvp.model.requests.ICocktailDetails
 import com.example.foodviewer.mvp.model.requests.IIngredientDetails
 import com.example.foodviewer.mvp.navigation.IAppScreens
@@ -32,6 +34,9 @@ class SplashActivityPresenter() : MvpPresenter<ISplashActivityView>() {
     @Inject
     lateinit var screens: IAppScreens
 
+    @Inject
+    lateinit var cacheInvalidator: ICacheInvalidator
+
     companion object {
         const val SPLASH_ACTIVITY_TIMER_MS = 1500.toLong()
     }
@@ -44,12 +49,26 @@ class SplashActivityPresenter() : MvpPresenter<ISplashActivityView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
+        //val ingredientsObservable = cacheInvalidator.invalidateCacheIngredients()
+        val cocktailsObservable = cacheInvalidator.invalidateCacheCocktailsIngredients()
+
+        //val allObservable = ingredientsObservable.mergeWith(cocktailsObservable)
+
+        disposable = cocktailsObservable.observeOn(uiSchelduer).subscribe({
+            updateCompleted()
+        }, { error->
+            viewState.displayError(error.localizedMessage ?: "")
+            router.exit()
+        })
+
+
+        /*
         disposable = timer.observeOn(uiSchelduer).subscribe {
             updateCompleted()
         }
-
+        */
         //Update all ingredients database
-        
     }
 
     private fun updateCompleted() {

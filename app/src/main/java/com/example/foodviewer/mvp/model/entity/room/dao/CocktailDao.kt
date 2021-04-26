@@ -59,41 +59,6 @@ abstract class CocktailDao : CocktailAlcoholicDao, CocktailCategoryDao, Cocktail
             insertCocktail(it)
         }
 
-    /*
-        fun update(cocktailWithRecipe: RoomCocktailWithRecipe) {
-            var alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
-            var glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
-            var categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
-
-            if (alcoholicP == null) {
-                insertCAlcoholic(cocktailWithRecipe.alcoholic)
-                alcoholicP = findCAlcoholicByName(cocktailWithRecipe.alcoholic.strAlcoholic)
-            }
-            if (glassP == null) {
-                insertCGlass(cocktailWithRecipe.glass)
-                glassP = findCGlassByName(cocktailWithRecipe.glass.strGlass)
-            }
-            if (categoryP == null) {
-                insertCCategory(cocktailWithRecipe.category)
-                categoryP = findCCategoryByName(cocktailWithRecipe.category.strCategory)
-            }
-
-            val existingRecipes = findCRecipeByCocktailId(cocktailWithRecipe.cocktail.id)
-            if ( existingRecipes.zip(cocktailWithRecipe.recipe).all { (old, new) ->
-                        old.ingredientName == new.ingredientName && old.recipe == new.recipe
-                    }.not() ) { //Delete old recipes. Save new.
-                deleteCRecipe(existingRecipes)
-                insertCRecipe(cocktailWithRecipe.recipe)
-            }
-
-            val cWithRecipe = cocktailWithRecipe.cocktail.copy(
-                    strAlcoholicId = alcoholicP?.id,
-                    strGlassId = glassP?.id,
-                    strCategoryId = categoryP?.id
-            )
-            updateCRecord(cWithRecipe)
-        }
-    */
     fun delete(cocktail: RoomCocktailWithRecipe) = deleteCRecord(cocktail.cocktail)
 
     @Transaction
@@ -102,9 +67,13 @@ abstract class CocktailDao : CocktailAlcoholicDao, CocktailCategoryDao, Cocktail
 
     @Transaction
     @Query("SELECT * FROM RoomCocktailRecord WHERE id = :cocktailId LIMIT 1")
-    abstract fun findCocktailById(cocktailId: Long): RoomCocktailWithRecipe
+    abstract fun findCocktailById(cocktailId: Long): RoomCocktailWithRecipe?
 
     @Transaction
     @Query("SELECT * FROM RoomCocktailRecord WHERE strDrink = :cocktailName LIMIT 1")
-    abstract fun findCocktailByName(cocktailName: Long): RoomCocktailWithRecipe
+    abstract fun findCocktailByName(cocktailName: String): RoomCocktailWithRecipe?
+
+    @Transaction
+    @Query("SELECT * FROM RoomCocktailRecord")
+    abstract fun getAllCocktails() : List<RoomCocktailWithRecipe>
 }

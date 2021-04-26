@@ -1,8 +1,6 @@
 package com.example.foodviewer.mvp.model.entity
 
-import android.os.Parcelable
 import com.example.foodviewer.mvp.model.entity.json.CocktailDetailsJSON
-import kotlinx.parcelize.Parcelize
 
 data class CocktailDetails(
     val id: Long,

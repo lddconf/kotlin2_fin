@@ -5,4 +5,7 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip
 
 @AddToEndSingle
-interface ISplashActivityView : MvpView
+interface ISplashActivityView : MvpView {
+    @Skip
+    fun displayError(description: String)
+}

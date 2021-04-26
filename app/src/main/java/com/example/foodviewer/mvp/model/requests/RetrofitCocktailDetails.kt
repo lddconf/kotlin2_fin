@@ -32,7 +32,7 @@ class RetrofitCocktailDetails(
                 }
             }
         }.subscribeOn(Schedulers.io())
-
+/*
     override fun randomCocktail(): Single<CocktailDetails> = api.getRandomCocktail().flatMap {
         if (it.cocktails.isEmpty()) {
             Single.error(RuntimeException("Random cocktail was not generated"))
@@ -46,7 +46,7 @@ class RetrofitCocktailDetails(
             }
         }
     }.subscribeOn(Schedulers.io())
-
+*/
     override fun cocktailById(id: Long): Single<CocktailDetails> =
         api.searchCocktailById(id).flatMap {
             if (it.cocktails.isEmpty()) {
@@ -61,7 +61,7 @@ class RetrofitCocktailDetails(
                 }
             }
         }.subscribeOn(Schedulers.io())
-
+/*
     override fun cocktailsByLetter(letter: Char): Single<List<CocktailDetails>> =
         api.listCocktailsByLetter(letter.toString()).flatMap {
             if (it.cocktails.isEmpty()) {
@@ -76,7 +76,7 @@ class RetrofitCocktailDetails(
                 }
             }
         }.subscribeOn(Schedulers.io())
-
+*/
     override fun cocktailsWithIngredient(name: String): Single<List<Cocktail>> =
         api.searchCocktailByIngredient(name).flatMap { cocktails ->
             if (cocktails.cocktails.isEmpty()) {
@@ -88,7 +88,7 @@ class RetrofitCocktailDetails(
             }
         }.subscribeOn(Schedulers.io())
 
-    override fun cocktailListByAlcoholic(type: AlcoholicType): Single<List<Cocktail>> =
+    fun cocktailListByAlcoholic(type: AlcoholicType): Single<List<Cocktail>> =
         api.filterByAlcoholicType(type.strAlcoholic.replace(' ', '_')).flatMap { cocktails ->
             if (cocktails.cocktails.isEmpty()) {
                 Single.error(RuntimeException("No cocktails was found"))
@@ -99,7 +99,7 @@ class RetrofitCocktailDetails(
             }
         }.subscribeOn(Schedulers.io())
 
-    override fun cocktailsAlcoholicTypes(): Single<List<AlcoholicType>> =
+    fun cocktailsAlcoholicTypes(): Single<List<AlcoholicType>> =
         api.getAlcoholic().flatMap { typesList ->
             if (typesList.types.isEmpty()) {
                 Single.error(RuntimeException("No cocktails was found"))

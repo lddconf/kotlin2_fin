@@ -6,11 +6,12 @@ import androidx.room.PrimaryKey
 @Entity
 data class RoomCocktailRecord(
     @PrimaryKey val id: Long,
-    val strDrink: String?,
+    val strDrink: String,
     val strDrinkAlternative: String?,
     val strTags: String?,
     val strVideo: String?,
     val strDrinkThumb: String?,
+    val strInstructions : String?,
     val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: Boolean,
     val dateModified: String?,

@@ -51,14 +51,14 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
     }
 
     data class Ingredient(
-            val name: String
+        val name: String
     )
 
     class IngredientsDetailsPresenter() : IIngredientsListPresenter {
         @Inject
         lateinit var ingredientsApi: IIngredientDetails
 
-        var ingredients = mutableListOf<Pair<Ingredient, Boolean>>()
+        open var ingredients = mutableListOf<Pair<Ingredient, Boolean>>()
 
         override var itemClickListener: ((IIngredientsListItemView) -> Unit)? = null
         override var itemInBarCheckedListener: ((Int, Boolean) -> Unit)? = null
@@ -121,7 +121,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         return true
     }
 
-    private fun checkIngredientsInBar(ingredients: List<Ingredient>) {
+    private fun checkIngredientsInBarAndDisplay(ingredients: List<Ingredient>) {
         val ingredientNames = ingredients.map { it.name }
         barProperties.ingredientPresentByNames(ingredientNames).observeOn(uiSchelduer)
                 .subscribe({ presents ->
@@ -144,7 +144,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
                 .allIngredients()
                 .observeOn(uiSchelduer)
                 .subscribe({ ingredients ->
-                    checkIngredientsInBar(ingredients.map { Ingredient(it.strIngredient1) }
+                    checkIngredientsInBarAndDisplay(ingredients.map { Ingredient(it.strIngredient1) }
                             .sortedBy { it.name })
                 },
                         { error ->

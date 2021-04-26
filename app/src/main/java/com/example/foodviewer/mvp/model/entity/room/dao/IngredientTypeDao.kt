@@ -33,6 +33,6 @@ interface IngredientTypeDao {
     fun findITypeById(idIngredientType: Long) :  RoomIngredientType?
 
     @Transaction
-    @Query("SELECT * FROM RoomIngredientType WHERE typeName LIKE :ingredientType LIMIT 1")
+    @Query("SELECT * FROM RoomIngredientType WHERE typeName IN (:ingredientType) LIMIT 1")
     fun findITypeByName(ingredientType: String) :  RoomIngredientType?
 }

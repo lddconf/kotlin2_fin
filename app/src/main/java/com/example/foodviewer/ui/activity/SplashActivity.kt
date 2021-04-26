@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.foodviewer.R
 import com.example.foodviewer.databinding.ActivitySplashBinding
 import com.example.foodviewer.mvp.presenters.SplashActivityPresenter
@@ -51,5 +52,9 @@ class SplashActivity : MvpAppCompatActivity(), ISplashActivityView {
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun displayError(description: String) {
+        Toast.makeText(applicationContext, description, Toast.LENGTH_LONG).show()
     }
 }

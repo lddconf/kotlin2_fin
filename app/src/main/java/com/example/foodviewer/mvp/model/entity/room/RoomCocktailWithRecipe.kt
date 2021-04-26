@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.example.foodviewer.mvp.model.entity.CocktailDetails
+import com.example.foodviewer.mvp.model.entity.IngredientAmount
 
 data class RoomCocktailWithRecipe(
         @Embedded
@@ -27,11 +28,12 @@ data class RoomCocktailWithRecipe(
 fun CocktailDetails.toRoomCocktailWithRecipe(): RoomCocktailWithRecipe = RoomCocktailWithRecipe(
         cocktail = RoomCocktailRecord(
                 id = id,
-                strDrink = strDrink,
+                strDrink = strDrink ?: "",
                 strDrinkAlternative = strDrinkAlternative,
                 strTags = strTags,
                 strVideo = strVideo,
                 strDrinkThumb = strDrinkThumb,
+                strInstructions = strInstructions,
                 strImageAttribution = strImageAttribution,
                 strCreativeCommonsConfirmed = strCreativeCommonsConfirmed,
                 dateModified = dateModified,
@@ -51,6 +53,7 @@ fun CocktailDetails.toRoomCocktailWithRecipe(): RoomCocktailWithRecipe = RoomCoc
                 id = id,
                 strCategory = strCategory
         ),
+
         recipe = ingredients.map {
                 RoomCocktailRecipeRecord(
                         id = 0,
@@ -59,4 +62,23 @@ fun CocktailDetails.toRoomCocktailWithRecipe(): RoomCocktailWithRecipe = RoomCoc
                         recipe = it.amount
                 )
         }
+)
+
+fun RoomCocktailWithRecipe.toCocktailDetails(): CocktailDetails = CocktailDetails(
+        id = this.cocktail.id,
+        strDrink = this.cocktail.strDrink,
+        strDrinkAlternative = this.cocktail.strDrinkAlternative,
+        strTags = this.cocktail.strTags,
+        strVideo = this.cocktail.strVideo,
+        strCategory = this.category.strCategory,
+        strAlcoholic = this.alcoholic.strAlcoholic,
+        strGlass = this.glass.strGlass,
+        strInstructions = this.cocktail.strInstructions,
+        strDrinkThumb = this.cocktail.strDrinkThumb,
+        ingredients = this.recipe.map {
+                IngredientAmount(it.ingredientName, it.recipe)
+        },
+        strImageAttribution = this.cocktail.strImageAttribution,
+        strCreativeCommonsConfirmed = this.cocktail.strCreativeCommonsConfirmed,
+        dateModified = this.cocktail.dateModified
 )

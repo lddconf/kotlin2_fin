@@ -28,7 +28,6 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
         } ?: throw RuntimeException("Invalid insert argument")
     }
 
-    @Transaction
     open fun insert(ingredients: List<RoomIngredient>) = ingredients.forEach {
         insert(it)
     }
@@ -75,11 +74,11 @@ abstract class IngredientsDao : IngredientTypeDao, IngredientRecordDao {
 
     @Transaction
     @Query("SELECT * FROM RoomIngredientRecord WHERE idIngredient = :idIngredient LIMIT 1")
-    abstract fun findIngredientById(idIngredient: Long): RoomIngredient
+    abstract fun findIngredientById(idIngredient: Long): RoomIngredient?
 
     @Transaction
-    @Query("SELECT * FROM RoomIngredientRecord WHERE strIngredient = :ingredientName LIMIT 1")
-    abstract fun findIngredientByName(ingredientName: Long): RoomIngredient
+    @Query("SELECT * FROM RoomIngredientRecord WHERE strIngredient LIKE :ingredientName LIMIT 1")
+    abstract fun findIngredientByName(ingredientName: String): RoomIngredient?
 
     @Transaction
     @Query("SELECT * FROM RoomIngredientRecord WHERE strType = :ingredientTypeId")

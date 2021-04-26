@@ -26,4 +26,8 @@ interface CocktailRecipeDao {
     @Transaction
     @Query("SELECT * FROM RoomCocktailRecipeRecord WHERE cocktailId = :cocktailId")
     fun findCRecipeByCocktailId(cocktailId: Long) :  List<RoomCocktailRecipeRecord>
+
+    @Transaction
+    @Query("SELECT DISTINCT cocktailId FROM RoomCocktailRecipeRecord WHERE ingredientName LIKE UPPER(:ingredientName)")
+    fun findCRecipeByIngredientName(ingredientName : String) : List<Long>
 }
