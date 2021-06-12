@@ -15,11 +15,11 @@ import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageL
 
 
 
-open class IngredientsInBarRVAdapterCheckableInBar(
+open class IngredientsInBarRVAdapterCheckable(
     val presenter: IngredientsListPresenter.IngredientsDetailsPresenter,
     val imageLoader: IImageLoader<ImageView>
 ) :
-    RecyclerView.Adapter<IngredientsInBarRVAdapterCheckableInBar.IngredientsInBarViewHolder>() {
+    RecyclerView.Adapter<IngredientsInBarRVAdapterCheckable.IngredientsInBarViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientsInBarViewHolder =
         IngredientsInBarViewHolder(

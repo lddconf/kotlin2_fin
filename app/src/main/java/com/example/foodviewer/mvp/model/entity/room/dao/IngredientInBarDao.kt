@@ -25,8 +25,11 @@ interface IngredientInBarDao {
     @Delete
     fun deleteIInBarType(type: List<RoomIngredientInBarProp>)
 
-    @Query("SELECT * from RoomIngredientInBarProp")
-    fun getAllIInBar() : List<RoomIngredientInBarProp>
+//    @Query("SELECT * from RoomIngredientInBarProp")
+//    fun getAllIInBar() : List<RoomIngredientInBarProp>
+
+    @Query("SELECT ingredientId from RoomIngredientInBarProp WHERE amount > 0")
+    fun getAllIngredientsIdInBar() : List<Long>
 
     @Query("SELECT * FROM RoomIngredientInBarProp WHERE ingredientId = :idIngredientType LIMIT 1")
     fun findIInBarByIngredientId(idIngredientType: Long) :  RoomIngredientInBarProp?

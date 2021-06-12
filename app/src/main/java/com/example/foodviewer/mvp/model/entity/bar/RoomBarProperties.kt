@@ -74,4 +74,9 @@ class RoomBarProperties(val db: Database) : IBarProperties {
             }.subscribeOn(Schedulers.io())
 
     override fun ingredientInBarChangedByName(): Observable<IBarProperties.IngredientInBar> = barChanged.subscribeOn(Schedulers.io())
+
+    override fun allIngredientsInBar(): Single<List<Long>> =
+        Single.fromCallable {
+            db.ingredientsInBarProp.getAllIngredientsIdInBar()
+        }.subscribeOn(Schedulers.io())
 }

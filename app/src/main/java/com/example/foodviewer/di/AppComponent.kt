@@ -41,7 +41,6 @@ interface AppComponent {
     fun inject(ingredientsDetailsTabPresenter: IngredientsDetailsTabPresenter)
     fun inject(ingredientsListFragment: IngredientsListFragment)
     fun inject(ingredientsListPresenter: IngredientsListPresenter)
-    //fun inject(ingredientsInBarListPresenter: IngredientsInBarListPresenter)
 
     fun inject(ingredientsDetailsPresenter: IngredientsListPresenter.IngredientsDetailsPresenter)
     fun inject(ingredientsInBarListFragment: IngredientsInBarListFragment)

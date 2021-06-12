@@ -6,9 +6,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 
-class GlideImageLoader(val corner_round: Boolean = false) : IImageLoader<ImageView> {
+class GlideImageLoader(private val cornerRound: Boolean = false) : IImageLoader<ImageView> {
     override fun load(url: String, container: ImageView) {
-        if (corner_round) {
+        if (cornerRound) {
             Glide.with(container.context)
                 .load(url)
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(14)))

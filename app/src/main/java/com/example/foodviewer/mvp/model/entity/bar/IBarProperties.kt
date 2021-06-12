@@ -18,6 +18,8 @@ interface IBarProperties {
     fun setupIngredientById(ingredientId: Long, exist : Boolean) : Completable
     fun setupIngredientByName(ingredientName: String, exist : Boolean) : Completable
 
+    fun allIngredientsInBar() : Single<List<Long>>
+
     //Notification
     fun ingredientInBarChangedByName() : Observable<IngredientInBar>
 }

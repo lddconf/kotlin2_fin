@@ -9,7 +9,7 @@ import com.example.foodviewer.mvp.presenters.list.IIngredientsListItemView
 import com.example.foodviewer.mvp.presenters.list.IIngredientsListPresenter
 import com.example.foodviewer.mvp.view.IIngredientsListView
 import com.example.foodviewer.ui.App
-import com.example.foodviewer.ui.adapter.IngredientsInBarRVAdapterCheckableInBar
+import com.example.foodviewer.ui.adapter.IngredientsInBarRVAdapterCheckable
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
+open class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
 
     @Inject
     lateinit var api: ICocktailDetails
@@ -43,7 +43,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
     @field:Named("UIThread")
     lateinit var uiSchelduer: Scheduler
 
-    private val compositeDisposable = CompositeDisposable()
+    protected val compositeDisposable = CompositeDisposable()
     private var barChangedSubscription: Disposable? = null
 
     val ingredientDetailsPresenter = IngredientsDetailsPresenter().apply {
@@ -63,7 +63,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         override var itemClickListener: ((IIngredientsListItemView) -> Unit)? = null
         override var itemInBarCheckedListener: ((Int, Boolean) -> Unit)? = null
 
-        override fun bindView(view: IngredientsInBarRVAdapterCheckableInBar.IngredientsInBarViewHolder) = with(view) {
+        override fun bindView(view: IngredientsInBarRVAdapterCheckable.IngredientsInBarViewHolder) = with(view) {
             val ingredient = ingredients[view.pos]
 
             with(ingredient.first) {
@@ -121,7 +121,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         return true
     }
 
-    private fun checkIngredientsInBarAndDisplay(ingredients: List<Ingredient>) {
+    protected fun checkIngredientsInBarAndDisplay(ingredients: List<Ingredient>) {
         val ingredientNames = ingredients.map { it.name }
         barProperties.ingredientPresentByNames(ingredientNames).observeOn(uiSchelduer)
                 .subscribe({ presents ->
@@ -139,7 +139,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
                         })
     }
 
-    private fun loadIngredients() {
+    protected open fun loadIngredients() {
         val disposable1 = ingredientsApi
                 .allIngredients()
                 .observeOn(uiSchelduer)
@@ -164,7 +164,7 @@ class IngredientsListPresenter() : MvpPresenter<IIngredientsListView>() {
         viewState.updateIngredientsList()
     }
 
-    private fun ingredientInBarChanged(ingredientChanged: IBarProperties.IngredientInBar) {
+    protected open fun ingredientInBarChanged(ingredientChanged: IBarProperties.IngredientInBar) {
         ingredientDetailsPresenter.ingredients.forEachIndexed { index, pair ->
             if (pair.first.name == ingredientChanged.name) {
                 ingredientDetailsPresenter.ingredients[index] =

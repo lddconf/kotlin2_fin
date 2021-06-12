@@ -44,15 +44,16 @@ class IngredientsDetailsTabPresenter() : MvpPresenter<IIngredientsDetailsTabView
         IngredientsTabViewProvider(ingredientsTabGroup)
     }
 
-    class IngredientsTabViewProvider(val ingredientsTabGroup: IIngredientsTabGroup) : ITabFramesProvider {
+    class IngredientsTabViewProvider(val ingredientsTabGroup: IIngredientsTabGroup) :
+        ITabFramesProvider {
         private enum class TABS(val id: Int) {
             ALL_INGREDIENTS(0),
             INGREDIENTS_IN_BAR(1)
         }
 
         private val fragmentHolders = arrayListOf<TabFragmentHolder>(
-                ingredientsTabGroup.allIngredients(),
-                ingredientsTabGroup.ingredientsInBar()
+            ingredientsTabGroup.allIngredients(),
+            ingredientsTabGroup.ingredientsInBar()
         )
 
         override fun fragmentFactory(position: Int) = when (position) {
@@ -64,6 +65,7 @@ class IngredientsDetailsTabPresenter() : MvpPresenter<IIngredientsDetailsTabView
             }
             else -> null
         }
+
         override fun itemCount() = fragmentHolders.size
     }
 

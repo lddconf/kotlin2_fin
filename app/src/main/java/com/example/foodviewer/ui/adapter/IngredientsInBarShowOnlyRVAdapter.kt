@@ -9,10 +9,10 @@ import com.example.foodviewer.mvp.presenters.IngredientsListPresenter
 import ru.geekbrains.geekbrains_popular_libraries_kotlin.mvp.model.image.IImageLoader
 
 
-class IngredientsInBarRVAdapterUncheckableInBar(
+class IngredientsInBarShowOnlyRVAdapter(
         presenter: IngredientsListPresenter.IngredientsDetailsPresenter,
         imageLoader: IImageLoader<ImageView>
-) : IngredientsInBarRVAdapterCheckableInBar(presenter, imageLoader) {
+) : IngredientsInBarRVAdapterCheckable(presenter, imageLoader) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientsInBarViewHolder =
             IngredientsInBarViewHolder(
                     IngredientsListItemBinding.inflate(
